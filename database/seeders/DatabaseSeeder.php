@@ -71,5 +71,9 @@ class DatabaseSeeder extends Seeder
                 'content' => "Hey ! I'm a comment as example."
             ]
         );
+
+        \App\Models\Category::firstOrCreate(
+            ["name"=>"Marketing","color"=> "#f1f1f1"]
+        );
     }
 }

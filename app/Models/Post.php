@@ -27,6 +27,10 @@ class Post extends Model
         'content',
         'posted_at',
         'slug',
+        'view',
+        'category_id',
+        'thumb_url',
+        'image_url',
         'thumbnail_id',
     ];
 
@@ -74,7 +78,7 @@ class Post extends Model
     public function scopeSearch(Builder $query, ?string $search)
     {
         if ($search) {
-            return $query->where('title', 'ILIKE', "%{$search}%");
+            return $query->where('title', 'LIKE', "%{$search}%");
         }
     }
 
@@ -111,6 +115,11 @@ class Post extends Model
     public function author(): BelongsTo
     {
         return $this->belongsTo(User::class, 'author_id');
+    }
+
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(Category::class, 'category_id');
     }
 
     /**

@@ -10,6 +10,8 @@
 
     <title>{{ config('app.name', 'Laravel') }}</title>
 
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap" rel="stylesheet">
+
     @vite([
         'resources/sass/app.scss',
         'resources/js/app.js'
@@ -20,7 +22,7 @@
 <body class="d-flex flex-column vh-100">
     @include('shared/navbar')
 
-    <div class="container flex-grow-1">
+    <div>
         @include('shared/alerts')
 
         <main class="my-4">
@@ -29,5 +31,15 @@
     </div>
 
     @include('shared/footer')
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-Z2VBY9M42Z"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-Z2VBY9M42Z');
+    </script>
 </body>
 </html>
