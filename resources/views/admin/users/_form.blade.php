@@ -1,4 +1,4 @@
-<form action="{{ route('admin.users.update', $user) }}" method="POST">
+<form action="{{ route('admin.users.updated', $user) }}" method="POST">
   @method('PATCH')
   @csrf
 

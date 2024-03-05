@@ -6,7 +6,7 @@
 
     <hr class="my-4">
 
-    <form action="{{ route('users.update') }}" method="POST">
+    <form action="{{ route('users.updated') }}" method="POST">
       @method('PATCH')
       @csrf
 
