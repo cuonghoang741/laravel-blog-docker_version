@@ -5,7 +5,7 @@ services:
     build:
       args:
         user: laravel-blog
-        uid: 1000
+        uid: 9999
       context: ./docker/laravel
       dockerfile: Dockerfile
     working_dir: /var/www/code
@@ -41,7 +41,7 @@ services:
       MYSQL_DATABASE: demo
       MYSQL_ROOT_PASSWORD: 123456
     ports:
-      - 3306:3306
+      - 33069:3306
     networks:
       - laravel-blog-network
 
