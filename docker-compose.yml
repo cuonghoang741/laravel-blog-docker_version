@@ -29,7 +29,7 @@ services:
     networks:
       - laravel-blog-network
 
-  db:
+  database:
     container_name: mysql-laravel-blog
     image: mariadb:10.5.8
     command: --default-authentication-plugin=mysql_native_password
@@ -53,6 +53,14 @@ services:
       - laravel-blog-network
     ports:
       - "${REDIS_PORT}:6379"
+
+  npm:
+    image: node:16
+    working_dir: /var/www/code
+    entrypoint: [ "npm" ]
+    volumes:
+      - "./www/:/var/www/code"
+
 volumes:
   laravel-blog-database:
     driver: local

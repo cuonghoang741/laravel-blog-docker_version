@@ -7,7 +7,6 @@
 /public/js
 /public/mix-manifest.json
 public/media/
-public/build/
 /vendor
 /.idea
 /.vagrant
@@ -20,3 +19,5 @@ public/build/
 .phpunit.result.cache
 pint.json
 storage/media-library/temp
+
+!public/build/*

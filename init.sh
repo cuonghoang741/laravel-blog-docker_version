@@ -8,4 +8,7 @@ docker-compose exec app php artisan optimize
 docker-compose exec app php artisan migrate
 docker-compose exec app php artisan db:seed
 
+docker-compose exec app npm install --global yarn
+docker-compose exec app yarn
+
 

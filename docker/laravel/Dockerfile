@@ -8,9 +8,13 @@ RUN apt-get update && apt-get install -y \
     libfreetype6-dev \
     libwebp-dev \
     libzip-dev \
+    nodejs \
+    npm \
     zip \
     && docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
     && docker-php-ext-install -j$(nproc) gd pdo pdo_mysql zip exif pcntl
+
+
 
 # Cài đặt Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
@@ -31,4 +35,4 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 RUN #composer install
 
 # Expose port 80
-EXPOSE 80
+#EXPOSE 80
