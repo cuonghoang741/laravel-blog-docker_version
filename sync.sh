@@ -1,2 +1,2 @@
 git pull
-docker-compose exec app php artisan optimize
+sudo docker-compose exec app php artisan optimize
