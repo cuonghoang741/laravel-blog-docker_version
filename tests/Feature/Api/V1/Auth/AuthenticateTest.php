@@ -19,8 +19,8 @@ class AuthenticateTest extends TestCase
         $user->roles()->save($role);
 
         $res = $this->json('POST', '/api/v1/authenticate', [
-            'email' => 'admin@gmail.com',
-            'password' => '123456'
+            'email' => 'darthvader@deathstar.ds',
+            'password' => '4nak1n'
         ])
             ->assertOk()
             ->assertJsonStructure([
