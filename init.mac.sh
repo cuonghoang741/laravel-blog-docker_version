@@ -1,4 +1,4 @@
-docker-compose -f docker-compose.yml up --build -d
+docker-compose -f docker-compose.mac.yml up --build -d
 docker-compose exec app composer install
 docker-compose exec app php artisan key:generate
 docker-compose php artisan horizon:install

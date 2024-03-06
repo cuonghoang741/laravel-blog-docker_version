@@ -65,17 +65,26 @@
         @lang('posts.attributes.thumbnail')
     </label>
 
-    <select name="thumbnail_id" id="thumbnail_id" @class(['form-control', 'is-invalid' => $errors->has('thumbnail_id')])>
-        <option value="">
-            @lang('posts.placeholder.thumbnail')
-        </option>
+{{--    <select name="thumbnail_id" id="thumbnail_id" @class(['form-control', 'is-invalid' => $errors->has('thumbnail_id')])>--}}
+{{--        <option value="">--}}
+{{--            @lang('posts.placeholder.thumbnail')--}}
+{{--        </option>--}}
 
-        @foreach ($media as $id => $name)
-            <option value="{{ $id }}" @selected(old('thumbnail_id', $post ?? null) == $id)>
-                {{ $name }}
-            </option>
-        @endforeach
-    </select>
+{{--        @foreach ($media as $id => $name)--}}
+{{--            <option value="{{ $id }}" @selected(old('thumbnail_id', $post ?? null) == $id)>--}}
+{{--                {{ $name }}--}}
+{{--            </option>--}}
+{{--        @endforeach--}}
+{{--    </select>--}}
+
+    <input
+        type="text"
+        name="thumb_url"
+        id="thumb_url"
+        @class(['form-control', 'is-invalid' => $errors->has('thumb_url')])
+        required
+        value="{{ old('thumb_url', $post ?? null) }}"
+    >
 
     @error('thumbnail_id')
         <span class="invalid-feedback">{{ $message }}</span>

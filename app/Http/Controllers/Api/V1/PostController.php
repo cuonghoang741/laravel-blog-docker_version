@@ -39,10 +39,11 @@ class PostController extends Controller
      */
     public function store(PostsRequest $request): PostResource
     {
+        dd($request);
         $this->authorize('store', Post::class);
 
         return new PostResource(
-            Post::create($request->only(['title', 'content', 'posted_at', 'author_id', 'thumbnail_id']))
+            Post::create($request->only(['title', 'content', 'posted_at', 'author_id', 'thumbnail_id', 'thumb_url', 'category_id']))
         );
     }
 

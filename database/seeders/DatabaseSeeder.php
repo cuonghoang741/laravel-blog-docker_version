@@ -73,7 +73,7 @@ class DatabaseSeeder extends Seeder
         );
 
         \App\Models\Category::firstOrCreate(
-            ["name"=>"Marketing","color"=> "#f1f1f1"]
+            ["name"=>"Marketing","background_color"=> "#f1f1f1"]
         );
     }
 }

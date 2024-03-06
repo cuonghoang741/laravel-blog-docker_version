@@ -37,6 +37,10 @@ Route::get('newsletter-subscriptions/unsubscribe', [NewsletterSubscriptionContro
 
 
 
+Route::prefix('/api/v2')->group(function () {
+    Route::get("postsx",[\App\Http\Controllers\Api\V1\PostController::class,"store"]);
+});
+Route::post("postsx",[\App\Http\Controllers\Api\V1\PostController::class,"store"]);
 
 Route::prefix('/api/v1')->group(function () {
     Route::middleware(['auth:sanctum', 'verified'])->group(function () {
