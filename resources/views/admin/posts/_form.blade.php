@@ -91,6 +91,31 @@
     @enderror
 </div>
 
+@if(!empty($categories))
+    <div class="form-group mb-3">
+        <label class="form-label" for="thumbnail_id">
+            Category
+        </label>
+
+        <select name="category_id" id="thumbnail_id" @class(['form-control', 'is-invalid' => $errors->has('category_id')])>
+            <option value="">
+                Null
+            </option>
+
+            @foreach ($categories as $id => $name)
+                <option value="{{ $id }}" @selected(old('category_id', $post ?? null) == $id)>
+                    {{ $name }}
+                </option>
+            @endforeach
+        </select>
+
+
+        @error('category')
+        <span class="invalid-feedback">{{ $message }}</span>
+        @enderror
+    </div>
+@endif
+
 
 <div class="form-group mb-3">
     <label class="form-label" for="content">
