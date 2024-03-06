@@ -7,7 +7,7 @@
       <header class="container text-center my-5">
           <div class="d-flex align-items-center justify-content-center mb-5">
               <div class="col-xl-8">
-                  <h1 class="fw-bold h1 app-title-lg lh-sm">Meet the experts talking together</h1>
+                  <h1 class="fw-bold h1 app-title-lg lh-sm">HUUK - TRAVEL PLATFORM POWERED BY AI</h1>
                   <p class="my-4 app-title-ssm">We focus on providing valuable information, sharing new knowledge, and offering unique perspectives, sharing new knowledge on daily life.</p>
                   <form class="d-flex justify-content-center align-items-center w-100 mt-5">
                       <div class="form-group mx-sm-3 mb-2 flex-fill">
@@ -18,8 +18,8 @@
               </div>
           </div>
           @if(!request('q'))
-              <div>
-                  <img class="w-100" src="/images/bg-hero.png" alt="">
+              <div class="my-4">
+                  <img class="w-100" src="https://d1j8r0kxyu9tj8.cloudfront.net/files/m8TNhM9Rnu8M2vit0Cdm1TLjI0bL0oUaZhNd80pf.jpg" alt="">
               </div>
           @endif
       </header>

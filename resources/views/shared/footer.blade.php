@@ -18,8 +18,8 @@
 <quote class="container-fluid text-black py-5" style="margin-bottom: 70px">
     <div class="row">
         <div class="col-lg-8 mx-auto text-center">
-            <p class="lead fs-6">EVERY MOMENT WITH INSTAGRAM</p>
-            <h2 class="app-title fw-bold pb-5">Never run out of inspiration again. Follow Samplcyi today.</h2>
+            <p class="lead fs-6">LIFE IS A JOURNEY</p>
+            <h2 class="app-title fw-bold pb-5">HUUK is ready to assist whenever you're set to explore.</h2>
         </div>
     </div>
 </quote>
@@ -31,12 +31,12 @@
 
 
     <div class="container">
-        <div class="row">
+        <div class="row align-items-center">
             <div class="col-md-4 text-center text-md-left mb-3 mb-md-0">
-                <span>© 2023 Samplcyi.</span>
+                <span><strong>HUUK</strong> - POWERED BY AI</span>
             </div>
             <div class="col-md-4 text-center mb-3 mb-md-0">
-                <a href="mailto:kami@kamiagence.com" class="text-white">kami@kamiagence.com</a>
+                <a href="/" class="text-white"><b></b></a>
             </div>
             <div class="col-md-4 text-center text-md-right d-flex">
                 <div class="logo logo-sm rounded-circle bg-gray-800 me-2">
@@ -51,13 +51,13 @@
                     <a href="#" class="text-white"><i class="fab fa-youtube"></i></a></div>
             </div>
         </div>
-        <div class="row mt-2">
+        <!-- <div class="row mt-2">
             <div class="col-12 text-center">
                 <a href="#" class="text-white mr-3">Home</a>
                 <a href="#" class="text-white mr-3">About</a>
                 <a href="#" class="text-white mr-3">Categories</a>
                 <a href="#" class="text-white">Contact</a>
             </div>
-        </div>
+        </div> -->
     </div>
 </footer>
