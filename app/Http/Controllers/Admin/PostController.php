@@ -61,7 +61,7 @@ class PostController extends Controller
      */
     public function update(PostsRequest $request, Post $post): RedirectResponse
     {
-        $post->update($request->only(['title', 'content', 'posted_at', 'author_id', 'thumbnail_id']));
+        $post->update($request->only(['title', 'content', 'posted_at', 'author_id', 'thumbnail_id', 'thumb_url', 'image_url', 'category_id']));
 
         return redirect()->route('admin.posts.edit', $post)->withSuccess(__('posts.updated'));
     }
