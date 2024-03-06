@@ -2,7 +2,7 @@
     <div class="container">
         <!-- Branding Image -->
         <a href="{{ route('home') }}" class="navbar-brand">
-            {{ config('app.name', 'Laravel') }}
+            <img src="https://d1j8r0kxyu9tj8.cloudfront.net/files/3lHErEeHqUz069qHpGgTFcwUEQXcuEeI47n1zWyv.png" style="height:30px">
         </a>
 
         <!-- Collapsed Hamburger -->
