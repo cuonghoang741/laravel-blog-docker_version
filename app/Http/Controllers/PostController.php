@@ -16,7 +16,7 @@ class PostController extends Controller
         return Post::search($request->input('q'))->orderBy("created_at","desc")
             ->with('author', 'likes', 'category')
             ->withCount('comments', 'thumbnail', 'likes')
-            ->paginate(2);
+            ->paginate(16);
     }
 
     public function index(Request $request): View

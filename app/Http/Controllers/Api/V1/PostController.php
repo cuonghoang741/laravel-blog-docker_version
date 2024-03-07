@@ -39,7 +39,6 @@ class PostController extends Controller
      */
     public function store(PostsRequest $request): PostResource
     {
-        dd($request);
         $this->authorize('store', Post::class);
 
         return new PostResource(
