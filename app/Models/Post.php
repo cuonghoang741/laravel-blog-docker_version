@@ -32,6 +32,7 @@ class Post extends Model
         'thumb_url',
         'image_url',
         'thumbnail_id',
+        'city', 'country', 'type', 'kind', 'status'
     ];
 
     /**
