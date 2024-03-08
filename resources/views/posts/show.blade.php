@@ -1,5 +1,11 @@
 @extends('layouts.app')
 
+@push('inline-scripts')
+    <title>{{$post->title}}</title>
+    <meta name="og:title" content="{{$post->title}}">
+    <meta property="og:description" content="{{ Str::words(strip_tags($post->content), 10) }}">
+@endpush
+
 @section('content')
     <div class="editor-view">
 

@@ -5,10 +5,14 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
+    @stack('inline-scripts')
+    <title>{{ config('app.name', 'Huuk - Travel platform powered by AI') }}</title>
+    <meta name="og:title" content="{{ config('app.name', 'Huuk - Travel platform powered by AI') }}"/>
+
+    <link rel="shortcut icon" href="https://d1j8r0kxyu9tj8.cloudfront.net/files/qAwg1QhQXzmTunGiqhg1L6Gb7bwMdOy6V4kivU62.png">
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Huuk - Travel platform powered by AI') }}</title>
 
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap" rel="stylesheet">
 
@@ -16,7 +20,7 @@
         'resources/sass/app.scss',
         'resources/js/app.js'
     ])
-    @stack('inline-scripts')
+
 </head>
 
 <body class="d-flex flex-column vh-100">
