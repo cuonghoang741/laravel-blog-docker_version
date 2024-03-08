@@ -2,8 +2,10 @@
 
 @push('inline-scripts')
     <title>{{$post->title}}</title>
+    <meta property="og:type" content="article">
     <meta name="og:title" content="{{$post->title}}">
     <meta property="og:description" content="{{ Str::words(strip_tags($post->content), 10) }}">
+    <meta property="og:image" content="{{$post->thumb_url}}">
 @endpush
 
 @section('content')
