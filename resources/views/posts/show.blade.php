@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@push('inline-scripts')
+@push('head')
     <title>{{$post->title}}</title>
     <meta property="og:type" content="article">
     <meta name="og:title" content="{{$post->title}}">

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Post;
+use App\Providers\TripPlanServiceProvider;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -56,5 +57,11 @@ class PostController extends Controller
             'post' => $post,
             'latest' => $latest
         ]);
+    }
+
+    public function test(){
+        $tripPlanServiceProvider = new TripPlanServiceProvider();
+
+        return $tripPlanServiceProvider->test();
     }
 }

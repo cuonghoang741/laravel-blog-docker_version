@@ -43,6 +43,13 @@ $breakpoint-medium: 992px;
 $breakpoint-large: 1200px;
 $breakpoint-extra-large: 1400px;
 
+
+$bg-app: #6941C6;
+$bg-app-600: #6941C6B7;
+$bg-app-300: #6941C68E;
+$bg-app-100: #CCBAF660;
+
+
 body {
     font-family: 'Manrope';font-size: 16px;
 }
@@ -243,4 +250,115 @@ a{
 }
 
 @media (max-width: #{$breakpoint-extra-large}) {
+}
+
+
+.btn-app,.app-input{
+    height: 50px !important;
+
+    &.error{
+        border: 1px solid #ff9f9f !important;
+    }
+}
+
+.bg-app{
+    background-color: $bg-app !important;
+}
+
+.app-input ,.select2-selection{
+    height: 56px !important;
+    border: 1px solid #E6E6E6 !important;
+    border-radius: 12px !important;
+    display: flex !important;
+    align-items: center;
+    padding: 0 15px !important;
+
+    &.error{
+        border: 1px solid #ff9f9f !important;
+    }
+    & .select2-selection__rendered{
+        padding: 0 !important;
+    }
+
+    & .select2-selection__arrow{
+        right: 12px !important;
+        & b{
+            transform: scale(1.5);
+        }
+    }
+
+    &::placeholder, .select2-selection__placeholder{
+        color: $gray-400 !important;
+    }
+}
+
+.select2-container--default .select2-selection--single .select2-selection__arrow{
+    top: 15px;
+}
+
+
+.bg-app-active{
+    &:hover{
+        background: $bg-app-600 !important;
+        color: white !important;
+    }
+
+    &.active{
+        color: white !important;
+        background: $bg-app !important;
+    }
+}
+
+.pointer-event-none-all{
+    pointer-events: none !important;
+}
+
+
+.select2-container{
+    .select2-dropdown.select2-dropdown--below{
+        border: 1px solid #E6E6E6 !important;
+        border-top: none !important;
+
+        & .select2-search__field{
+            border: none !important;
+            border-radius: 100px;
+            background: $gray-200;
+            padding: 10px 15px;
+            &:focus-visible{
+                box-shadow: none !important;
+                outline: 2px solid #e2e1e1;
+            }
+            &::placeholder{
+            }
+        }
+    }
+}
+
+.dropdown-toggle::after{
+    transform: scale(1.41);
+    color: #888888;
+}
+
+
+
+
+
+//------------------------------------GHI DE------------------------------------
+.select2-results__option--highlighted,.dropdown-item.active,.dropdown-item:focus,.dropdown-item:hover{
+    background-color: $bg-app-600 !important;
+    color: white;
+}
+.dropdown-item.active{
+    background-color: $bg-app !important;
+    color: white;
+}
+.daterangepicker{
+    & td{
+        &.in-range{
+            background-color: $bg-app-100 !important;
+        }
+        &.active{
+            background-color: $bg-app !important;
+        }
+    }
 }

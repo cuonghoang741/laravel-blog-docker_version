@@ -31,8 +31,6 @@ RUN chown -R www-data:www-data /var/www/html
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Cài đặt các phụ thuộc của Laravel thông qua Composer
-RUN #composer install
 
 # Expose port 80
 #EXPOSE 80

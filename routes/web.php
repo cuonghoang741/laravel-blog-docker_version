@@ -35,7 +35,12 @@ Route::resource('posts.comments', PostCommentController::class, array("as" => "a
 
 Route::get('newsletter-subscriptions/unsubscribe', [NewsletterSubscriptionController::class, 'unsubscribe'])->name('newsletter-subscriptions.unsubscribe');
 
-
+Route::prefix('/ai')->group(function () {
+    Route::prefix('/trip-planner')->group(function () {
+        Route::get("/",[\App\Http\Controllers\TripPlanController::class,"index"])->name("trip-planner");
+        Route::post("/",[\App\Http\Controllers\TripPlanController::class,"createPlan"]);
+    });
+});
 
 Route::prefix('/api/v2')->group(function () {
     Route::get("postsx",[\App\Http\Controllers\Api\V1\PostController::class,"store"]);
@@ -134,3 +139,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::resource('newsletter-subscriptions', NewsletterSubscriptionController::class)->only('store');
 });
+
+$routePublicV1 = function () {
+    Route::group(["prefix" => '/ai'], function () {
+        Route::group(["prefix" => '/trip-plan'], function () {
+            Route::group(["prefix" => '/cities'], function () {
+                Route::get('/',[\App\Http\Controllers\TripPlanController::class,'searchCities']);
+                Route::get('/{city:id}/fill-id',[\App\Http\Controllers\TripPlanController::class,'fillCityAdvisorId']);
+                Route::get('/{city:id}/locations',[\App\Http\Controllers\TripPlanController::class,'cityLocations']);
+            });
+        });
+    });
+};
+Route::prefix("web-api/v1")->group($routePublicV1);

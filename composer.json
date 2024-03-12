@@ -13,6 +13,7 @@
         "laravel/framework": "^10.24",
         "laravel/horizon": "5.21.4",
         "laravel/sanctum": "^3.3",
+        "laravel/socialite": "^5.12",
         "laravel/tinker": "2.8.2",
         "nunomaduro/collision": "7.8.1",
         "predis/predis": "2.2.2",

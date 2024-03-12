@@ -31,4 +31,7 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'rapid' => [
+        'key'=>env('RAPID_KEY')
+    ]
 ];

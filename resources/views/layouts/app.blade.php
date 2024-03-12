@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    @stack('inline-scripts')
+    @stack('head')
     <title>{{ config('app.name', 'Huuk - Travel platform powered by AI') }}</title>
     <meta name="og:title" content="{{ config('app.name', 'Huuk - Travel platform powered by AI') }}"/>
 
@@ -15,11 +15,17 @@
 
 
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap" rel="stylesheet">
+    <link href="/css/select2.min.css" rel="stylesheet"/>
+    <link href="/css/toastr.min.css" rel="stylesheet"/>
+    <link href="/font-awesome/css/all.min.css" rel="stylesheet"
+          type="text/css"/>
 
     @vite([
         'resources/sass/app.scss',
         'resources/js/app.js'
     ])
+
+    @stack('styles')
 
 </head>
 
@@ -38,6 +44,13 @@
 
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-Z2VBY9M42Z"></script>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="/js/select2.min.js" defer></script>
+    <script src="/js/axios.js" defer></script>
+    <script src="/js/app.js" defer></script>
+    <script src="/js/sweetalert2.js" defer></script>
+    <script src="/js/toastr.min.js" defer></script>
     <script>
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
@@ -45,5 +58,8 @@
 
         gtag('config', 'G-Z2VBY9M42Z');
     </script>
+
+    @stack('scripts')
+
 </body>
 </html>

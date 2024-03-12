@@ -21,7 +21,7 @@
         <div class="collapse navbar-collapse" id="navbarCollapse">
             @admin
                 <ul class="navbar-nav">
-                    <li class="nav-item">
+                    <li class="nav-item px-3">
                         <a href="{{ route('admin.dashboard') }}" class="nav-link">
                             @lang('dashboard.dashboard')
                         </a>
@@ -30,13 +30,23 @@
             @endadmin
 
             <ul class="navbar-nav ms-auto">
+                <li class="nav-item px-3">
+                    <a href="/" class="nav-link">
+                        Blog
+                    </a>
+                </li>
+                <li class="nav-item px-3">
+                    <a href="{{ route('trip-planner') }}" class="nav-link">
+                        Planner AI
+                    </a>
+                </li>
                 @guest
-                    <li class="nav-item">
+                    <li class="nav-item px-3">
                         <a href="{{ route('login') }}" class="nav-link">
                             @lang('auth.login')
                         </a>
                     </li>
-                    <li class="nav-item">
+                    <li class="nav-item px-3">
                         <a href="{{ route('register') }}" class="nav-link">
                             @lang('auth.register')
                         </a>
