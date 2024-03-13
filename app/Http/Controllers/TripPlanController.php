@@ -151,7 +151,11 @@ class TripPlanController extends Controller
         $data["name"] = $name;
 
         $data["image_url"] = $this->tripPlanService->get_thumb($name);
-        return Plan::query()->create($data);
+        $plan = Plan::query()->create($data);
+
+        $plan = Plan::query()->where($plan)->get();
+
+        return $plan;
     }
 
 
