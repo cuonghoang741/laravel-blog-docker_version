@@ -58,25 +58,33 @@
             @php
                 $count = 1;
                 $countColor = 0;
+                $startTime = 9;
 
             @endphp
             @foreach($plan["json_data_result"] as $time=>$timePlan)
+
                 <a class="d-flex align-items-center active" data-bs-toggle="collapse" href="#collapseTime{{$count}}">
                     <div
                         class="logo logo-ssm rounded-circle text-white fw-bold me-2" style="background-color: {{$colors[$countColor]}}">{{$count}}</div>
                     {{$time}}
-
                 </a>
-                <div class="collapse {{$count === 1 ? 'show' : ''}}" id="collapseTime{{$count}}">
+
+                <div class="collapse show" id="collapseTime{{$count}}">
                     <div class="pt-2">
+                        @if(empty($timePlan))
+                            <div class="h5">This location is no longer a tourist area</div>
+                        @endif
                         <div class="border-start position-relative px-3 position-relative">
                             @foreach($timePlan as $job)
                                 <div class="row pt-4">
+                                    <div class="col-md-4 col-xl-2 col-4">
+                                        <div class="card-img w-100 rounded-10" style="background-image: url('{{$job->photo->images->large->url}}')"></div>
+                                    </div>
                                     <div class="col-md-8 col-xl-10 col-8">
                                         <div class="d-flex align-items-center">
-                                            <span class="btn btn-sm rounded-2 bg-gray-200">09:00AM</span>
+                                            <span class="btn btn-sm rounded-2 bg-gray-200 pointer-event-none-all">{{$job->time->start}}</span>
                                             <i class="fas fa-arrow-right mx-2 fs-5 gray-700"></i>
-                                            <span class="btn btn-sm rounded-2 bg-gray-200">09:30AM</span>
+                                            <span class="btn btn-sm rounded-2 bg-gray-200 pointer-event-none-all">{{$job->time->end}}</span>
                                         </div>
                                         <div class="fs-5 fw-bold mt-3">
                                             {{$job->name}}
@@ -84,10 +92,11 @@
                                         <div class="lh-sm my-2">
                                             <small>
                                                 {{$job->description}}
+                                                <br>
+                                                {{$job->ranking}}
                                             </small>
                                         </div>
                                         <div class="fw-bold gray-600">
-                                            {{$job->ranking}}
                                         </div>
                                         <div class="d-flex align-items-center my-3 gray-500 fw-light text-nowrap">
                                             <i class="fal fa-cars me-2"></i>
@@ -95,11 +104,8 @@
                                             <div>
                                                 <div class="circle-dot mx-2"></div>
                                             </div>
-                                            <a href="#" onclick="showSoon()" class="text-link text-nowrap">Check direction</a>
+                                            <a target="_blank" href="https://www.google.com/maps/search/?api=1&query={{$job->latitude.",".$job->longitude}}" class="text-link text-nowrap">Check direction</a>
                                         </div>
-                                    </div>
-                                    <div class="col-md-4 col-xl-2 col-4">
-                                        <div class="card-img w-100 rounded-10" style="background-image: url('{{$job->photo->images->large->url}}')"></div>
                                     </div>
                                 </div>
                             @endforeach

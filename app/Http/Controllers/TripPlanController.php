@@ -142,7 +142,7 @@ class TripPlanController extends Controller
             "daterange" => $request->input("daterange"),
             "people" => $request->input("people"),
             "location" => $request->input("location"),
-            "author_id"=>Auth::id()
+            "author_id"=>Auth::id() ?? 2
         ];
         $name = removeSubstringAfterLastDash($data["city"]["name"]);
         $data["json_data"] = json_encode($data);
@@ -156,14 +156,15 @@ class TripPlanController extends Controller
 
 
     public function show(Plan $plan){
-        if (!$plan->data_result_json){
+        if (true){
             $data = json_decode($plan["json_data"]);
             $dateRange = $data->daterange;
             $dateRangeDay = getDateRange($dateRange);
             $locationPerDay = !empty($data->location) ? (int) $data->location : 3;
             $locations = Location::query()->where("city_id",$data->city->id)->get();
-            if (empty($locations)){
-//                $this->tripPlanService->get_location_attractions($data->city->trip_advisor_id,$city,200);
+            if (!count($locations)){
+                $city = City::query()->find($data->city->id);
+                $this->tripPlanService->get_location_attractions($city->trip_advisor_id,$city,200);
             }
             $results = [];
             $indexLocation = 0;
@@ -172,9 +173,11 @@ class TripPlanController extends Controller
                 if (empty($locations[$indexLocation])){
                     break;
                 }
+                $timeRange = generateTimeSlots($locationPerDay);
                 for ($i = 0;$i < $locationPerDay;$i++){
                     if (!empty($locations[$indexLocation])){
                         $locations[$indexLocation]->photo = json_decode($locations[$indexLocation]->photo);
+                        $locations[$indexLocation]->time = $timeRange[$i];
                         array_push($results[$day],$locations[$indexLocation]->toArray());
                         $indexLocation += 1;
                     } else break;

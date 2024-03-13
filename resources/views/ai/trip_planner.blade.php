@@ -78,15 +78,18 @@
                     </div>
 
                     <div class="d-flex justify-content-center mt-md-5 mt-4">
-                        @if(\Illuminate\Support\Facades\Auth::user())
-                            <button type="button" onclick="planForm.create()" class="btn-create-plan btn bg-app btn-app text-white">Generate
-                                Itinerary
-                            </button>
-                        @else
-                            <button type="button" class="btn-create-plan btn bg-app btn-app text-white">Generate
-                                Itinerary
-                            </button>
-                        @endif
+{{--                        @if(\Illuminate\Support\Facades\Auth::user())--}}
+{{--                            <button type="button" onclick="planForm.create()" class="btn-create-plan btn bg-app btn-app text-white">Generate--}}
+{{--                                Itinerary--}}
+{{--                            </button>--}}
+{{--                        @else--}}
+{{--                            <button type="button" class="btn-create-plan btn bg-app btn-app text-white">Generate--}}
+{{--                                Itinerary--}}
+{{--                            </button>--}}
+{{--                        @endif--}}
+                        <button type="button" onclick="planForm.create()" class="btn-create-plan btn bg-app btn-app text-white">Generate
+                            Itinerary
+                        </button>
                     </div>
                     <quote class="text-center d-flex justify-content-center mt-5 gray-500">
                         <small>HuukAI - Powered by Huuk.Social - Your Travel Assistant</small>
