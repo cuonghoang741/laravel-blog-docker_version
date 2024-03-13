@@ -45,7 +45,7 @@
         <hr>
         <div class="d-flex justify-content-between align-items-center">
             <h1 class="h1 text-app mb-4">
-                Itinerary
+               Itinerary for a {{day_diff($plan['json_data']->daterange)}} days trip in {{removeSubstringAfterLastDash($plan["json_data"]->city->name)}}
             </h1>
             <div class="gray-500">
                 <small>
@@ -98,15 +98,15 @@
                                         </div>
                                         <div class="fw-bold gray-600">
                                         </div>
-                                        <div class="d-flex align-items-center my-3 gray-500 fw-light text-nowrap">
-                                            <i class="fal fa-cars me-2"></i>
-                                            30 min <span class="d-md-inline-block d-none text-nowrap">&nbsp; to the next place</span>
-                                            <div>
-                                                <div class="circle-dot mx-2"></div>
-                                            </div>
-                                            <a target="_blank" href="https://www.google.com/maps/search/?api=1&query={{$job->latitude.",".$job->longitude}}" class="text-link text-nowrap">Check direction</a>
-                                        </div>
                                     </div>
+                                </div>
+                                <div class="d-flex align-items-center my-3 gray-500 fw-light text-nowrap">
+                                    <i class="fal fa-cars me-2"></i>
+                                    30 min <span class="d-md-inline-block d-none text-nowrap">&nbsp; to the next place</span>
+                                    <div>
+                                        <div class="circle-dot mx-2"></div>
+                                    </div>
+                                    <a target="_blank" href="https://www.google.com/maps/search/?api=1&query={{$job->latitude.",".$job->longitude}}" class="text-link text-nowrap">Check direction</a>
                                 </div>
                             @endforeach
                             <div style="width: 8px;height: 8px;top: 80px;left: -4.5px" class="logo bg-gray-400 position-absolute"></div>

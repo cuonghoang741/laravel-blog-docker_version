@@ -129,8 +129,8 @@
                     $(".btn-create-plan").attr("disabled",true);
                     planForm.post(data)
                         .then(r => {
-                            const id = r.data.id;
-                            location.href = "/ai/trip-planner/" + id
+                            // const id = r.data.id;
+                            // location.href = "/ai/trip-planner/" + id
                         }).catch(e => {
                         quickToastMixin("error", "Cannot create your trip plan. Please try again")
                     }).finally(()=>{
