@@ -170,7 +170,7 @@ class TripPlanController extends Controller
             $dateRange = $data->daterange;
             $dateRangeDay = getDateRange($dateRange);
             $locationPerDay = !empty($data->location) ? (int) $data->location : 3;
-            $locations = Location::query()->where("city_id",$data->city->id)->get();
+            $locations = Location::with("category")->where("city_id",$data->city->id)->get();
             if (!count($locations)){
                 $city = City::query()->find($data->city->id);
                 $this->tripPlanService->get_location_attractions($city->trip_advisor_id,$city,200);
@@ -182,9 +182,10 @@ class TripPlanController extends Controller
                 if (empty($locations[$indexLocation])){
                     break;
                 }
-                $timeRange = generateTimeSlots($locationPerDay);
-                for ($i = 0;$i < $locationPerDay;$i++){
+                $timeRange = generateTimeSlots($locationPerDay+1);
+                for ($i = 0;$i <= $locationPerDay;$i++){
                     if (!empty($locations[$indexLocation])){
+//                        $locations[$indexLocation]->category = $locations[$indexLocation]->category()->get();
                         $locations[$indexLocation]->photo = json_decode($locations[$indexLocation]->photo);
                         $locations[$indexLocation]->time = $timeRange[$i];
                         array_push($results[$day],$locations[$indexLocation]->toArray());

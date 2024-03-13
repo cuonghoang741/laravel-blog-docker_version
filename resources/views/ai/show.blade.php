@@ -90,10 +90,11 @@
                                             {{$job->name}}
                                         </div>
                                         <div class="lh-sm my-2">
+                                            <div class="mb-2">
+                                                <small class="badge bg-gray-300 gray-700">{{$job->category->name}}</small>
+                                            </div>
                                             <small>
                                                 {{$job->description}}
-                                                <br>
-                                                {{$job->ranking}}
                                             </small>
                                         </div>
                                         <div class="fw-bold gray-600">

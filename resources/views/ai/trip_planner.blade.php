@@ -18,7 +18,7 @@
 @endpush
 
 @section('content')
-    <div class="container min-vh-100">
+    <div class="container min-vh-100" style="max-width: 100vw">
         <div class="row justify-content-center mt-xl-5 mt-md-4">
             <div class="col-xl-8 col-md-10">
                 <h1 class="app-title fw-bold text-center">Let's Plan Your Journey!</h1>

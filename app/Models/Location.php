@@ -73,4 +73,8 @@ class Location extends Model
         'cluster_id',
         'color_code',
     ];
+
+    public function category(){
+        return $this->belongsTo(LocationCategory::class,"category_id");
+    }
 }
