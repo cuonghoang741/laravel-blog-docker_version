@@ -42,7 +42,7 @@ function day_diff($daterange) {
     // Tính số ngày giữa hai ngày
     $soNgay = round(($ngayKetThuc - $ngayBatDau) / (60 * 60 * 24));
 
-    return $soNgay;
+    return $soNgay + 1;
 }
 function getDateRange($dateRange) {
     // Tách chuỗi thời gian thành ngày bắt đầu và kết thúc
