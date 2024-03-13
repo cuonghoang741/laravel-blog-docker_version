@@ -105,3 +105,7 @@ function quickToastMixin(option="success", title, config={link_href: "", link_te
     title: title,
   });
 }
+
+function showSoon() {
+  quickToastMixin("info","Feature under development")
+}

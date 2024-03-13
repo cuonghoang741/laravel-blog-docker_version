@@ -96,7 +96,10 @@ a{
     align-items: center;
     justify-content: center;
 }
-
+.logo-ssm{
+    width: 25px;
+    height: 25px;
+}
 .logo-sm{
     width: 40px;
     height: 40px;
@@ -361,4 +364,24 @@ a{
             background-color: $bg-app !important;
         }
     }
+}
+
+.cursor-pointer{
+    cursor: pointer;
+}
+
+.text-app{
+    color: #6941C6;
+}
+
+.text-link{
+    color: #5E6BE2;
+}
+
+
+.circle-dot{
+    width: 8px;
+    height: 8px;
+    border-radius: 100%;
+    background-color: $gray-300;
 }

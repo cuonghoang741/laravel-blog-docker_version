@@ -49,6 +49,15 @@
                             </button>
                         </div>
                     </div>
+                    <div class="form-group mt-5 position-relative number-location">
+                        <label for="" class="mb-3">How many places do you want to go per day?</label>
+                        <div class="d-flex align-items-center w-100 flex-wrap position-relative" style="left: -5px">
+                            <button type="button" class="btn btn-group-item bg-app-active m-2">1 location</button>
+                            <button type="button" class="btn btn-group-item bg-app-active m-2">2 location</button>
+                            <button type="button" class="btn btn-group-item bg-app-active m-2 active">3 location</button>
+                            <button type="button" class="btn btn-group-item bg-app-active m-2"><span class="fs-5">></span>4 locations</button>
+                        </div>
+                    </div>
                     <div class="form-group mt-5 position-relative select-budget">
                         <label for="" class="mb-3">What's your estimated budget for this trip? <span class="gray-500">(Optional)</span></label>
                         <div class="dropdown dropdown-select">
@@ -69,9 +78,15 @@
                     </div>
 
                     <div class="d-flex justify-content-center mt-md-5 mt-4">
-                        <button type="button" onclick="planForm.create()" class="btn-create-plan btn bg-app btn-app text-white">Generate
-                            Itinerary
-                        </button>
+                        @if(\Illuminate\Support\Facades\Auth::user())
+                            <button type="button" onclick="planForm.create()" class="btn-create-plan btn bg-app btn-app text-white">Generate
+                                Itinerary
+                            </button>
+                        @else
+                            <button type="button" class="btn-create-plan btn bg-app btn-app text-white">Generate
+                                Itinerary
+                            </button>
+                        @endif
                     </div>
                     <quote class="text-center d-flex justify-content-center mt-5 gray-500">
                         <small>HuukAI - Powered by Huuk.Social - Your Travel Assistant</small>
@@ -92,11 +107,12 @@
                 getData: function () {
                     return {
                         city: {
-                            name: $("#select2-dropdown-city").prop("innerText"),
+                            name: $(".select2-selection__rendered").attr("title"),
                             id: $("#select2-dropdown-city").val(),
                         },
                         daterange: $("input[name='daterange']").val(),
                         people: $(".number-people .btn-group-item.active").html(),
+                        location: $(".number-location .btn-group-item.active").html()?.replace("location",""),
                         budget: $(".select-budget .dropdown-item.active").html()
                     }
                 },
@@ -140,7 +156,8 @@
 
             $(function () {
                 $(".btn-group-item").click(function () {
-                    $(".btn-group-item").removeClass("active")
+                    const box = $(this).closest(".d-flex");
+                    $(box).find(".btn-group-item").removeClass("active")
                     $(this).addClass("active")
                 })
             })

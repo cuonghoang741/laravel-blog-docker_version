@@ -13,5 +13,7 @@ class Plan extends Model
         "name",
         "image_url",
         "json_data",
+        "json_data_result",
+        "author_id",
     ];
 }

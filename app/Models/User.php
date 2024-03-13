@@ -120,6 +120,14 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
+     * Return the user's posts
+     */
+    public function plans(): HasMany
+    {
+        return $this->hasMany(Plan::class, 'author_id');
+    }
+
+    /**
      * Return the user's comments
      */
     public function comments(): HasMany

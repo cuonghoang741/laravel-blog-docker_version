@@ -18,6 +18,7 @@ class TripPlanController extends Controller
     {
         $this->tripPlanService = $tripPlanService;
         $this->rapidKey = config("services.rapid.key");
+        $this->colors = ["#FF7BF9","#A269EB","#EB6969","#D1EB69","#61E19C"];
     }
 
     public function fillCityAdvisorId(City $city){
@@ -133,20 +134,60 @@ class TripPlanController extends Controller
         return view("ai.trip_planner");
     }
 
+
     public function createPlan(Request $request){
         $data = [
             "city" => $request->input("city"),
             "budget" => $request->input("budget"),
             "daterange" => $request->input("daterange"),
             "people" => $request->input("people"),
-            "user_id"=>Auth::id()
+            "location" => $request->input("location"),
+            "author_id"=>Auth::id()
         ];
+        $name = removeSubstringAfterLastDash($data["city"]["name"]);
+        $data["json_data"] = json_encode($data);
 
-        $name = $data["city"]["name"]." · ".day_diff($data["daterange"]). " days";
+        $name = $name." · ".day_diff($data["daterange"]). " days";
         $data["name"] = $name;
 
-        $data["image_url"] = $this->tripPlanService->get_thumb($data["city"]["id"]);
-
+        $data["image_url"] = $this->tripPlanService->get_thumb($name);
         return Plan::query()->create($data);
+    }
+
+
+    public function show(Plan $plan){
+        if (!$plan->data_result_json){
+            $data = json_decode($plan["json_data"]);
+            $dateRange = $data->daterange;
+            $dateRangeDay = getDateRange($dateRange);
+            $locationPerDay = !empty($data->location) ? (int) $data->location : 3;
+            $locations = Location::query()->where("city_id",$data->city->id)->get();
+
+            $results = [];
+            $indexLocation = 0;
+            foreach ($dateRangeDay as $day){
+                $results[$day] = [];
+                if (empty($locations[$indexLocation])){
+                    break;
+                }
+                for ($i = 0;$i < $locationPerDay;$i++){
+                    if (!empty($locations[$indexLocation])){
+                        $locations[$indexLocation]->photo = json_decode($locations[$indexLocation]->photo);
+                        array_push($results[$day],$locations[$indexLocation]->toArray());
+                        $indexLocation += 1;
+                    } else break;
+                }
+            }
+            $plan->json_data_result = json_encode($results);
+            $plan->save();
+        }
+        $plan->json_data_result = json_decode($plan->json_data_result);
+        $plan->json_data = json_decode($plan->json_data);
+
+        $colors = $this->colors;
+        if (count($colors) < count((array)$plan->json_data_result)){
+            $colors = array_merge($this->colors,randomHexColors(count((array)$plan->json_data_result)));
+        }
+        return view("ai.show",["plan"=>$plan->toArray(),"colors"=>$colors]);
     }
 }

@@ -150,6 +150,7 @@ class TripPlanService
                 $location['offer_group'] = !empty($location['offer_group']) ? json_encode($location['offer_group']) : "[]";
                 $location['tags'] = !empty($location['tags']) ? json_encode($location['tags']) : "[]";
                 $location['awards'] = !empty($location['awards']) ? json_encode($location['awards']) : "[]";
+                $location['neighborhood_info'] = !empty($location['neighborhood_info']) ? json_encode($location['neighborhood_info']) : "[]";
                 $location['animal_welfare_tag'] = !empty($location['animal_welfare_tag']) ? json_encode($location['animal_welfare_tag']) : "[]";
                 $location['nearest_metro_station'] = !empty($location['nearest_metro_station']) ? json_encode($location['nearest_metro_station']) : "[]";
 
@@ -167,7 +168,6 @@ class TripPlanService
 
                 unset($location["category"]);
                 unset($location["subcategory"]);
-//                dd($location);
                 $location = Location::updateOrCreate(['location_id' => $location['location_id']], $location);
 
                 foreach ($subcategories as $subcategory){
@@ -178,7 +178,7 @@ class TripPlanService
                     LocationLocationSubcategory::query()->updateOrCreate($data,$data);
                 }
             } catch (\Exception $exception){
-                dd($location);
+//                dd($location);
             }
         }
 
@@ -197,34 +197,44 @@ class TripPlanService
         $url = "https://unsplash.com/napi/search/photos";
         $params = array(
             "orientation" => "landscape",
-            "per_page" => "20", // Since we're only interested in the first image, request only one
+            "per_page" => "20",
             "query" => $city,
             "plus" => "none"
         );
 
         try {
-            $response = file_get_contents($url . '?' . http_build_query($params));
+            $queryString = http_build_query($params);
+            $fullUrl = $url . "?" . $queryString;
+
+            // Set up headers
+            $options = [
+                "http" => [
+                    "header" => "User-Agent: My-App",
+                ],
+            ];
+            $context = stream_context_create($options);
+
+            // Make the request
+            $response = file_get_contents($fullUrl, false, $context);
+
             if ($response !== false) {
                 $data = json_decode($response, true);
                 if (!empty($data["results"])) {
                     $image_url = $data["results"][0]["urls"][$size];
-                    if (!empty($image_url)) {
+                    if ($image_url) {
                         return $image_url;
                     } else {
-                        echo "Size '" . $size . "' not found.";
-                        return null;
+                        return "Size '{$size}' not found.";
                     }
                 } else {
-                    echo "No images found for the query.";
-                    return null;
+                    return "No images found for the query.";
                 }
             } else {
-                echo "Failed to get response.";
-                return null;
+                return "Failed to get response from API.";
             }
         } catch (Exception $e) {
-            echo "An error occurred: " . $e->getMessage();
-            return null;
+            return "An error occurred: " . $e->getMessage();
         }
     }
+
 }
