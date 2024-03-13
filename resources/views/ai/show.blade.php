@@ -78,7 +78,7 @@
                             @foreach($timePlan as $job)
                                 <div class="row pt-4">
                                     <div class="col-md-4 col-xl-2 col-4">
-                                        <div class="card-img w-100 rounded-10" style="background-image: url('{{$job->photo->images->large->url}}')"></div>
+                                        <div class="card-img w-100 rounded-10" style="background-image: url('{{!empty($job->photo->images->large->url) ? $job->photo->images->large->url : getImageError()}}')"></div>
                                     </div>
                                     <div class="col-md-8 col-xl-10 col-8">
                                         <div class="d-flex align-items-center">

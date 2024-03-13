@@ -105,7 +105,7 @@
                 defer></script>
 
         <script>
-
+            var isAwait = false;
             const planForm = {
                 getData: function () {
                     return {
@@ -127,15 +127,22 @@
                     const valid = planForm.validate(data);
                     if (!valid) return ;
                     $(".btn-create-plan").attr("disabled",true);
-                    planForm.post(data)
-                        .then(r => {
-                            const id = r.data.id;
-                            location.href = "/ai/trip-planner/" + id
-                        }).catch(e => {
-                        quickToastMixin("error", "Cannot create your trip plan. Please try again")
-                    }).finally(()=>{
-                        $(".btn-create-plan").attr("disabled",false);
-                    })
+                    let second = 0;
+                    if(isAwait){
+                        second = 10*1000;
+                        quickToastMixin("warning","Please wait a moment. We're creating your itinerary")
+                    }
+                    setTimeout(function () {
+                        planForm.post(data)
+                            .then(r => {
+                                const id = r.data.id;
+                                location.href = "/ai/trip-planner/" + id
+                            }).catch(e => {
+                            quickToastMixin("error", "Cannot create your trip plan. Please try again")
+                        }).finally(()=>{
+                            $(".btn-create-plan").attr("disabled",false);
+                        })
+                    },second)
                 },
                 validate: function (data) {
                     const box = $("#select2-dropdown-city").parent();
@@ -236,6 +243,7 @@
 
             async function fillId(city) {
                 if (!city.trip_advisor_id) {
+                    isAwait = true;
                     return await axios.get(BASE_API + `/ai/trip-plan/cities/${city.id}/fill-id`)
                 }
             }

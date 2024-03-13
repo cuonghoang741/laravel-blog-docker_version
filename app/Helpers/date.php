@@ -17,6 +17,10 @@ function humanize_date(Carbon $date, string $format = 'd F Y, H:i'): string
 {
     return $date->format($format);
 }
+
+function getImageError(){
+    return "https://media.istockphoto.com/id/1409329028/vector/no-picture-available-placeholder-thumbnail-icon-illustration-design.jpg?s=612x612&w=0&k=20&c=_zOuJu755g2eEUioiOUdz_mHKJQJn-tDgIAhQzyeKUQ=";
+}
 function isUpdatedWithinOneMonth($updated_at) {
     // Chuyển đổi ngày tháng từ chuỗi thành đối tượng DateTime
     $updatedDate = new DateTime($updated_at);
