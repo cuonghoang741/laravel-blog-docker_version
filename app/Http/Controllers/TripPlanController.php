@@ -153,7 +153,12 @@ class TripPlanController extends Controller
         $data["image_url"] = $this->tripPlanService->get_thumb($name);
         $plan = Plan::query()->create($data);
 
-        $plan = Plan::query()->where($plan)->get();
+        $plan = Plan::query()->where([
+            "author_id"=>Auth::id() ?? 2,
+            "name"=>$name,
+            "image_url"=>$data["image_url"],
+            "json_data"=>$data["json_data"]
+        ])->first();
 
         return $plan;
     }
