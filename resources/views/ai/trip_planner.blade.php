@@ -67,12 +67,12 @@
                                 Select your budget
                             </button>
                             <ul class="dropdown-menu w-100" aria-labelledby="dropdownMenuButton1">
-                                <li><a class="dropdown-item" href="#">Less than 500 USD</a></li>
-                                <li><a class="dropdown-item" href="#">Between 500 and 1000 USD</a></li>
-                                <li><a class="dropdown-item" href="#">Between 1000 and 2000 USD</a></li>
-                                <li><a class="dropdown-item" href="#">Between 2000 and 5000 USD</a></li>
-                                <li><a class="dropdown-item" href="#">Between 5000 and 10000 USD</a></li>
-                                <li><a class="dropdown-item" href="#">More than 10000 USD</a></li>
+                                <li><a class="dropdown-item">Less than 500 USD</a></li>
+                                <li><a class="dropdown-item">Between 500 and 1000 USD</a></li>
+                                <li><a class="dropdown-item">Between 1000 and 2000 USD</a></li>
+                                <li><a class="dropdown-item">Between 2000 and 5000 USD</a></li>
+                                <li><a class="dropdown-item">Between 5000 and 10000 USD</a></li>
+                                <li><a class="dropdown-item">More than 10000 USD</a></li>
                             </ul>
                         </div>
                     </div>
@@ -129,7 +129,7 @@
                     $(".btn-create-plan").attr("disabled",true);
                     let second = 0;
                     if(isAwait){
-                        second = 10*1000;
+                        second = 8*1000;
                         quickToastMixin("warning","Please wait a moment. We're creating your itinerary")
                     }
                     setTimeout(function () {
