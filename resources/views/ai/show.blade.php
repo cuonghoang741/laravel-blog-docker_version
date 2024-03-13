@@ -109,7 +109,9 @@
                                     <a target="_blank" href="https://www.google.com/maps/search/?api=1&query={{$job->latitude.",".$job->longitude}}" class="text-link text-nowrap">Check direction</a>
                                 </div>
                             @endforeach
-                            <div style="width: 8px;height: 8px;top: 80px;left: -4.5px" class="logo bg-gray-400 position-absolute"></div>
+                                @if(!empty($timePlan))
+                                    <div style="width: 8px;height: 8px;top: 80px;left: -4.5px" class="logo bg-gray-400 position-absolute"></div>
+                                @endif
                         </div>
                     </div>
                 </div>
