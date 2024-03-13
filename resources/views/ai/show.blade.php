@@ -86,6 +86,9 @@
                                                 {{$job->description}}
                                             </small>
                                         </div>
+                                        <div class="fw-bold gray-600">
+                                            {{$job->ranking}}
+                                        </div>
                                         <div class="d-flex align-items-center my-3 gray-500 fw-light text-nowrap">
                                             <i class="fal fa-cars me-2"></i>
                                             30 min <span class="d-md-inline-block d-none text-nowrap">&nbsp; to the next place</span>

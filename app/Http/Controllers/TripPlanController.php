@@ -162,7 +162,9 @@ class TripPlanController extends Controller
             $dateRangeDay = getDateRange($dateRange);
             $locationPerDay = !empty($data->location) ? (int) $data->location : 3;
             $locations = Location::query()->where("city_id",$data->city->id)->get();
-
+            if (empty($locations)){
+//                $this->tripPlanService->get_location_attractions($data->city->trip_advisor_id,$city,200);
+            }
             $results = [];
             $indexLocation = 0;
             foreach ($dateRangeDay as $day){
