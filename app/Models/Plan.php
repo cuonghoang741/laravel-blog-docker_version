@@ -12,6 +12,7 @@ class Plan extends Model
 
     protected $fillable = [
         "name",
+        "id",
         "image_url",
         "json_data",
         "json_data_result",
