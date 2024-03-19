@@ -417,7 +417,7 @@ class TripPlanController extends Controller
                         ->where("longitude",">",$lngBot)
                     ;
                 })
-                ->limit(10)->get();
+                ->limit(20)->get();
             return $locations;
         } else {
             return response()->json(['error' => 'Cannot find locations between 2 cities'], Response::HTTP_NOT_FOUND);
