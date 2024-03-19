@@ -45,7 +45,7 @@
         <hr>
         <div class="d-flex justify-content-between align-items-center">
             <h1 class="h1 text-app mb-4">
-               Itinerary for {{day_diff($plan['json_data']->daterange)}} days trip in {{removeSubstringAfterLastDash($plan["json_data"]->city->name)}}
+               Itinerary for {{day_diff($plan['json_data']->daterange) + 1}}} days trip in {{removeSubstringAfterLastDash($plan["json_data"]->city->name)}}
             </h1>
             <div class="gray-500">
                 <small>
