@@ -1,0 +1,135 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Tên API",
+        "description": "Mô tả API của bạn",
+        "contact": {
+            "name": "Tên liên hệ",
+            "email": "email@domain.com"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/web-api/v1/ai/trip-plan/cities/{cityId}/locations": {
+            "get": {
+                "tags": [
+                    "city"
+                ],
+                "summary": "Get city locations",
+                "operationId": "cityLocations",
+                "parameters": [
+                    {
+                        "name": "cityId",
+                        "in": "path",
+                        "description": "ID of the city",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            }
+        },
+        "/web-api/v1/ai/trip-plan/cities/{cityId}/locations/force": {
+            "get": {
+                "tags": [
+                    "city"
+                ],
+                "summary": "Force regain all city locations",
+                "operationId": "cityLocationsForce",
+                "parameters": [
+                    {
+                        "name": "cityId",
+                        "in": "path",
+                        "description": "Regain all city locations (will take a long time)",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            }
+        },
+        "/web-api/v1/ai/trip-plan": {
+            "post": {
+                "tags": [
+                    "trip plan"
+                ],
+                "summary": "Create a new plan",
+                "operationId": "createPlan",
+                "requestBody": {
+                    "description": "Plan information",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "city_id": {
+                                        "type": "integer"
+                                    },
+                                    "daterange": {
+                                        "description": "EX: 03/11/2024 12:00 AM - 03/16/2024 11:59 PM",
+                                        "type": "string"
+                                    },
+                                    "budget": {
+                                        "type": "number"
+                                    },
+                                    "people": {
+                                        "type": "integer"
+                                    },
+                                    "location": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Plan created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "id": {
+                                            "type": "integer"
+                                        },
+                                        "name": {
+                                            "type": "string"
+                                        },
+                                        "image_url": {
+                                            "type": "string"
+                                        },
+                                        "json_data": {
+                                            "type": "string"
+                                        },
+                                        "author_id": {
+                                            "type": "integer"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

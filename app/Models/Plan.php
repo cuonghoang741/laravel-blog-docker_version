@@ -13,6 +13,7 @@ class Plan extends Model
     protected $fillable = [
         "name",
         "id",
+        "city_id",
         "image_url",
         "json_data",
         "json_data_result",
@@ -21,6 +22,6 @@ class Plan extends Model
 
     public function city(): HasOne
     {
-        return $this->hasOne(Plan::class, 'city_id');
+        return $this->hasOne(City::class, 'id');
     }
 }

@@ -7,7 +7,7 @@ RUN apt-get update && apt-get install -y \
     libjpeg-dev \
     libfreetype6-dev \
     libwebp-dev \
-    libzip-dev \
+    libzip-dev \z
     zip \
     && docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
     && docker-php-ext-install -j$(nproc) gd pdo pdo_mysql zip exif pcntl

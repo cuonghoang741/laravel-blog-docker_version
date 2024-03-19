@@ -78,8 +78,8 @@ class TripPlanService
         if (isset($data['results']) && count($data['results']) > 0) {
             $first_location_id = $data['results']['data'][0]['result_object']['location_id'];
             $first_location_name = $data['results']['data'][0]['result_object']['name'];
-            echo "First location_id: " . $first_location_id . "<br/>";
-            echo "First location_name: " . $first_location_name . "<br/>";
+//            echo "First location_id: " . $first_location_id . "<br/>";
+//            echo "First location_name: " . $first_location_name . "<br/>";
             return $first_location_id;
         } else {
             echo "No results found.<br/>";
@@ -96,6 +96,7 @@ class TripPlanService
             "X-RapidAPI-Host: tourist-attraction.p.rapidapi.com"
         ];
 
+        $hasMore = 1;
         $allLocations = [];
         $offset = 0;
         $total_results = 0;
@@ -131,6 +132,7 @@ class TripPlanService
                 $this->sort_locations(array_slice($locations, 0, $limit), 'num_reviews');
                 $this->createLocations($locations,$city);
             } else {
+                echo "breack";
                 break;
             }
         }

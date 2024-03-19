@@ -39,12 +39,19 @@ class AllUsaLocationsSeeder extends Seeder
         $iso3 = "USA";
         $cities = City::query()->where("iso3",$iso3)->get();
         foreach ($cities as $key=>$city){
-            echo $key."-".$city->name."\n";
-            Location::query()->where("city_id",$city->id)->delete();
-            $this->fillCityAdvisorId($city);
-            $trip_advisor_id = $city->trip_advisor_id;
-            if ($trip_advisor_id){
-                $this->tripPlanService->get_location_attractions($trip_advisor_id,$city,1000000);
+            $count = Location::query()->where("city_id",$city->id)->count();
+            echo $key."-".$city->id."-".$city->name."-count: $count"."\n";
+
+            if ($count < 200){
+                Location::query()->where("city_id",$city->id)->delete();
+                if (!$city->trip_advisor_id) {
+                    $this->fillCityAdvisorId($city);
+                    $city = $city->refresh();
+                }
+                $trip_advisor_id = $city->trip_advisor_id;
+                if ($trip_advisor_id){
+                    $this->tripPlanService->get_location_attractions($trip_advisor_id,$city,10000);
+                }
             }
         }
     }

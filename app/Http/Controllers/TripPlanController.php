@@ -14,7 +14,23 @@ use App\Services\TripPlanService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Excel;
+use Illuminate\Http\Response;
 
+/**
+ * @OA\Info(
+ *     title="Tên API",
+ *     version="1.0.0",
+ *     description="Mô tả API của bạn",
+ *     @OA\Contact(
+ *         email="email@domain.com",
+ *         name="Tên liên hệ"
+ *     ),
+ *     @OA\License(
+ *         name="Apache 2.0",
+ *         url="http://www.apache.org/licenses/LICENSE-2.0.html"
+ *     )
+ * )
+ */
 class TripPlanController extends Controller
 {
     public function __construct(TripPlanService $tripPlanService)
@@ -29,10 +45,10 @@ class TripPlanController extends Controller
             try {
                 $id = $this->tripPlanService->get_location_id($city->city_ascii);
                 $city->trip_advisor_id = $id;
-                $city->save();
+                return $city->save();
             } catch (\Exception $exception){
                 $city->trip_advisor_id = -1;
-                $city->save();
+                return $city->save();
             }
         }
     }
@@ -101,17 +117,63 @@ class TripPlanController extends Controller
         return $locations;
     }
 
-    public function cityLocations(City $city){
+    /**
+     * @OA\Get(
+     *     path="/web-api/v1/ai/trip-plan/cities/{cityId}/locations",
+     *     tags={"city"},
+     *     summary="Get city locations",
+     *     operationId="cityLocations",
+     *     @OA\Parameter(
+     *         name="cityId",
+     *         in="path",
+     *         description="ID of the city",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="integer"
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful operation"
+     *     )
+     * )
+     */
+    public function cityLocations(City $city,$limit = 200){
         $locations = Location::where("city_id",$city->id)->get();
         if (!count($locations) || isUpdatedWithinOneMonth($city->updated_at)){
-            $locations = $this->tripPlanService->get_location_attractions($city->trip_advisor_id,$city,200);
+            $trip_advisor_id = $city->trip_advisor_id;
+            if (!$trip_advisor_id){
+                $this->fillCityAdvisorId($city);
+                $city = $city->refresh();
+            }
+            $locations = $this->tripPlanService->get_location_attractions($city->trip_advisor_id,$city,$limit);
             $locations = $this->createLocations($locations,$city);
         }
 
         return $locations;
     }
 
-
+    /**
+     * @OA\Get(
+     *     path="/web-api/v1/ai/trip-plan/cities/{cityId}/locations/force",
+     *     tags={"city"},
+     *     summary="Force regain all city locations",
+     *     operationId="cityLocationsForce",
+     *     @OA\Parameter(
+     *         name="cityId",
+     *         in="path",
+     *         description="Regain all city locations (will take a long time)",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="integer"
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful operation"
+     *     )
+     * )
+     */
     public function cityLocationsForce(City $city){
         $locations = Location::query()->where("city_id",$city->id)->delete();
         $this->tripPlanService->get_location_attractions($city->trip_advisor_id,$city,100000);
@@ -140,43 +202,70 @@ class TripPlanController extends Controller
         return $this->tripPlanService->get_location_id("hanoi");
     }
 
+
     public function index(Request $request){
         return view("ai.trip_planner");
     }
 
 
+    /**
+     * @OA\Post(
+     *     path="/web-api/v1/ai/trip-plan",
+     *     tags={"trip plan"},
+     *     summary="Create a new plan",
+     *     operationId="createPlan",
+     *     @OA\RequestBody(
+     *         required=true,
+     *         description="Plan information",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="city_id", type="integer"),
+     *             @OA\Property(property="daterange", type="string",description="EX: 03/11/2024 12:00 AM - 03/16/2024 11:59 PM"),
+     *             @OA\Property(property="budget", type="number"),
+     *             @OA\Property(property="people", type="integer"),
+     *             @OA\Property(property="location", type="string")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Plan created successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="id", type="integer"),
+     *             @OA\Property(property="name", type="string"),
+     *             @OA\Property(property="image_url", type="string"),
+     *             @OA\Property(property="json_data", type="string"),
+     *             @OA\Property(property="author_id", type="integer")
+     *         )
+     *     )
+     * )
+     */
     public function createPlan(Request $request){
         $data = [
-            "city" => $request->input("city"),
+            "city_id" => $request->input("city_id"),
             "budget" => $request->input("budget"),
             "daterange" => $request->input("daterange"),
             "people" => $request->input("people"),
             "location" => $request->input("location"),
             "author_id"=>Auth::id() ?? 2
         ];
-        $name = removeSubstringAfterLastDash($data["city"]["name"]);
+        $city = City::query()->find($request->city_id);
+        if (!$city){
+            return response()->json(['error' => 'City not found'], Response::HTTP_NOT_FOUND);
+        }
+        $name = $city->name;
         $data["json_data"] = json_encode($data);
 
         $name = $name." · ".day_diff($data["daterange"]). " days";
         $data["name"] = $name;
 
         $data["image_url"] = $this->tripPlanService->get_thumb($name);
-        $plan = Plan::query()->create($data);
 
-        $plan = Plan::query()->where([
-            "author_id"=>Auth::id() ?? 2,
-            "name"=>$name,
-            "image_url"=>$data["image_url"],
-            "json_data"=>$data["json_data"]
-        ])->first();
-
-        return $plan;
+        return Plan::create($data);;
     }
 
 
     public function show(Plan $plan){
-        if (true){
-//        if (!$plan->json_data_result){
+//        if (true){
+        if (!$plan->json_data_result){
             $data = json_decode($plan["json_data"]);
             $dateRange = $data->daterange;
             $dateRangeDay = getDateRange($dateRange);
@@ -184,10 +273,10 @@ class TripPlanController extends Controller
             if ($locationPerDay === 4){
                 $locationPerDay = mt_rand(4, 6);
             }
-            $locations = Location::with("category")->where("city_id",$data->city->id)->get();
+            $locations = Location::with("category")->where("city_id",$data->city_id)->get();
 
             if (!count($locations)){
-                $city = City::query()->find($data->city->id);
+                $city = City::query()->find($data->city_id);
                 $this->tripPlanService->get_location_attractions($city->trip_advisor_id,$city,200);
             }
             $results = [];
@@ -218,6 +307,7 @@ class TripPlanController extends Controller
         if (count($colors) < count((array)$plan->json_data_result)){
             $colors = array_merge($this->colors,randomHexColors(count((array)$plan->json_data_result)));
         }
+        $plan->city = $plan->city()->first()->toArray();
         return view("ai.show",["plan"=>$plan->toArray(),"colors"=>$colors]);
     }
 
@@ -237,5 +327,16 @@ class TripPlanController extends Controller
     public function exportPosts(Excel $excel)
     {
         return $excel->download(new PostsExport, 'posts.xlsx');
+    }
+
+    public function locationsBetween(Request $request){
+        $cityFrom = City::find($request->from_city_id);
+        $cityTo = City::find($request->to_city_id);
+        $locations = Location::query()->whereIn("city_id",[$request->from_city_id,$request->to_city_id]);
+        if (count($locations)){
+
+        } else{
+            return response()->json(['error' => 'Cannot find locations between 2 cities'], Response::HTTP_NOT_FOUND);
+        }
     }
 }

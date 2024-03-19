@@ -1,0 +1,55 @@
+version: '3.8'
+services:
+  app:
+    container_name: app-laravel-blog
+    build:
+      args:
+        user: laravel-blog_social
+        uid: 9999
+      context: ./docker/laravel
+      dockerfile: Dockerfile
+    working_dir: /var/www/code
+    restart: unless-stopped
+    volumes:
+      - .:/var/www/code
+      - ./docker/laravel/php.ini:/usr/local/etc/php/conf.d/php.ini-development
+    networks:
+      - laravel-blog-network
+  web:
+    container_name: web-laravel-blog
+    image: nginx
+    restart: unless-stopped
+    working_dir: /var/www/code
+    user: root
+    volumes:
+      - .:/var/www/code
+      - ./docker/nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+    ports:
+      - 9999:80
+    networks:
+      - laravel-blog-network
+
+  redis:
+    image: redis:latest
+    container_name: laravel_redis
+    restart: unless-stopped
+    networks:
+      - laravel-blog-network
+    ports:
+      - "${REDIS_PORT}:6379"
+
+  npm:
+    image: node:16
+    working_dir: /var/www/code
+    entrypoint: [ "npm" ]
+    volumes:
+      - "./www/:/var/www/code"
+
+#volumes:
+#  laravel-blog-database:
+#    driver: local
+
+networks:
+  laravel-blog-network:
+    driver: bridge
+

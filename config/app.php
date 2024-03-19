@@ -168,6 +168,7 @@ return [
         App\Providers\BladeServiceProvider::class,
         App\Providers\HorizonServiceProvider::class,
         App\Providers\ObserverServiceProvider::class,
+        L5Swagger\L5SwaggerServiceProvider::class,
     ])->toArray(),
 
     /*

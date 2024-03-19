@@ -109,10 +109,7 @@
             const planForm = {
                 getData: function () {
                     return {
-                        city: {
-                            name: $(".select2-selection__rendered").attr("title"),
-                            id: $("#select2-dropdown-city").val(),
-                        },
+                        city_id: $("#select2-dropdown-city").val(),
                         daterange: $("input[name='daterange']").val(),
                         people: $(".number-people .btn-group-item.active").html(),
                         location: $(".number-location .btn-group-item.active").html()?.replace("location",""),
@@ -120,7 +117,7 @@
                     }
                 },
                 post: function (data) {
-                    return axios.post("/ai/trip-planner", data);
+                    return axios.post(BASE_API + `/ai/trip-plan`, data);
                 },
                 create: function () {
                     const data = planForm.getData();
@@ -146,7 +143,7 @@
                 },
                 validate: function (data) {
                     const box = $("#select2-dropdown-city").parent();
-                    if(!data.city?.id){
+                    if(!data.city_id){
                         $(box).find(".select2-selection").addClass("error");
                         $(box).focus();
                         return false;
