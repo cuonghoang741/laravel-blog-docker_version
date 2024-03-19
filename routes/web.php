@@ -146,6 +146,7 @@ $routePublicV1 = function () {
     Route::group(["prefix" => '/ai'], function () {
         Route::group(["prefix" => '/trip-plan'], function () {
             Route::post("/",[\App\Http\Controllers\TripPlanController::class,"createPlan"]);
+            Route::get("/wayspot",[\App\Http\Controllers\TripPlanController::class,"locationsBetween"]);
             Route::group(["prefix" => '/cities'], function () {
                 Route::get('/',[\App\Http\Controllers\TripPlanController::class,'searchCities']);
                 Route::get('/{city:id}/fill-id',[\App\Http\Controllers\TripPlanController::class,'fillCityAdvisorId']);

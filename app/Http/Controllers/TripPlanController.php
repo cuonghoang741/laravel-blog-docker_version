@@ -33,40 +33,63 @@ class TripPlanController extends Controller
     {
         $this->tripPlanService = $tripPlanService;
         $this->rapidKey = config("services.rapid.key");
-        $this->colors = ["#FF7BF9","#A269EB","#EB6969","#D1EB69","#61E19C"];
+        $this->colors = ["#FF7BF9", "#A269EB", "#EB6969", "#D1EB69", "#61E19C"];
     }
 
-    public function fillCityAdvisorId(City $city){
-        if (empty($city->trip_advisor_id)){
+    public function fillCityAdvisorId(City $city)
+    {
+        if (empty($city->trip_advisor_id)) {
             try {
                 $id = $this->tripPlanService->get_location_id($city->city_ascii);
                 $city->trip_advisor_id = $id;
                 return $city->save();
-            } catch (\Exception $exception){
+            } catch (\Exception $exception) {
                 $city->trip_advisor_id = -1;
                 return $city->save();
             }
         }
     }
 
-    public function searchCities(Request $request){
+    /**
+     * @OA\Get(
+     *     path="/web-api/v1/ai/trip-plan/cities",
+     *     tags={"city"},
+     *     summary="Get city by keyword",
+     *     operationId="searchCities",
+     *     @OA\Parameter(
+     *         name="search",
+     *         in="query",
+     *         description="ID of the city",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="string"
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful operation"
+     *     )
+     * )
+     */
+    public function searchCities(Request $request)
+    {
         $search = $request->input("search");
 
-        $cities = City::query()->where(function ($whereBuilder) use ($search){
-            return $whereBuilder->where("name","like","%$search%")
-                ->orWhere("country","like","%$search%")
-                ->orWhere("city_ascii","like","%$search%")
-                ->orWhere("iso2","like","%$search%")
-                ->orWhere("iso3","like","%$search%")
-                ->orWhere("admin_name","like","%$search%");
+        $cities = City::query()->where(function ($whereBuilder) use ($search) {
+            return $whereBuilder->where("name", "like", "%$search%")
+                ->orWhere("country", "like", "%$search%")
+                ->orWhere("city_ascii", "like", "%$search%")
+                ->orWhere("iso2", "like", "%$search%")
+                ->orWhere("iso3", "like", "%$search%")
+                ->orWhere("admin_name", "like", "%$search%");
         })->limit(5)->get();
 
-//        $this->fillCityIds($cities);
         return $cities;
     }
 
-    private function createLocations($locations,$city){
-        foreach ($locations as &$location){
+    private function createLocations($locations, $city)
+    {
+        foreach ($locations as &$location) {
             try {
                 $location['city_id'] = $city->id;
                 $location['photo'] = !empty($location['photo']) ? json_encode($location['photo']) : "[]";
@@ -84,12 +107,12 @@ class TripPlanController extends Controller
 
                 // update or create category
                 $category = $location['category'];
-                $category = LocationCategory::query()->updateOrCreate(["key"=>$category["key"]],$category);
+                $category = LocationCategory::query()->updateOrCreate(["key" => $category["key"]], $category);
 
                 // update or create subcategory
                 $subcategories = $location['subcategory'];
-                foreach ($subcategories as $key=>$subcategory){
-                    $subcategories[$key] = LocationSubcategory::query()->updateOrCreate(["key"=>$subcategory["key"]],$subcategory);
+                foreach ($subcategories as $key => $subcategory) {
+                    $subcategories[$key] = LocationSubcategory::query()->updateOrCreate(["key" => $subcategory["key"]], $subcategory);
                 }
 
                 $location["category_id"] = $category->id;
@@ -99,14 +122,14 @@ class TripPlanController extends Controller
 //                dd($location);
                 $location = Location::updateOrCreate(['location_id' => $location['location_id']], $location);
 
-                foreach ($subcategories as $subcategory){
+                foreach ($subcategories as $subcategory) {
                     $data = [
-                        "location_id"=>$location->id,
-                        "location_subcategory_id"=>$subcategory->id,
+                        "location_id" => $location->id,
+                        "location_subcategory_id" => $subcategory->id,
                     ];
-                    LocationLocationSubcategory::query()->updateOrCreate($data,$data);
+                    LocationLocationSubcategory::query()->updateOrCreate($data, $data);
                 }
-            } catch (\Exception $exception){
+            } catch (\Exception $exception) {
             }
         }
 
@@ -134,16 +157,17 @@ class TripPlanController extends Controller
      *     )
      * )
      */
-    public function cityLocations(City $city,$limit = 200){
-        $locations = Location::where("city_id",$city->id)->get();
-        if (!count($locations) || isUpdatedWithinOneMonth($city->updated_at)){
+    public function cityLocations(City $city, $limit = 200)
+    {
+        $locations = Location::where("city_id", $city->id)->get();
+        if (!count($locations) || isUpdatedWithinOneMonth($city->updated_at)) {
             $trip_advisor_id = $city->trip_advisor_id;
-            if (!$trip_advisor_id){
+            if (!$trip_advisor_id) {
                 $this->fillCityAdvisorId($city);
                 $city = $city->refresh();
             }
-            $locations = $this->tripPlanService->get_location_attractions($city->trip_advisor_id,$city,$limit);
-            $locations = $this->createLocations($locations,$city);
+            $locations = $this->tripPlanService->get_location_attractions($city->trip_advisor_id, $city, $limit);
+            $locations = $this->createLocations($locations, $city);
         }
 
         return $locations;
@@ -170,14 +194,16 @@ class TripPlanController extends Controller
      *     )
      * )
      */
-    public function cityLocationsForce(City $city){
-        $locations = Location::query()->where("city_id",$city->id)->delete();
-        $this->tripPlanService->get_location_attractions($city->trip_advisor_id,$city,100000);
+    public function cityLocationsForce(City $city)
+    {
+        $locations = Location::query()->where("city_id", $city->id)->delete();
+        $this->tripPlanService->get_location_attractions($city->trip_advisor_id, $city, 100000);
 
         return $locations;
     }
 
-    public function test(){
+    public function test()
+    {
         $locations = array(
             array(
                 'latitude' => '40.7128',
@@ -199,7 +225,8 @@ class TripPlanController extends Controller
     }
 
 
-    public function index(Request $request){
+    public function index(Request $request)
+    {
         return view("ai.trip_planner");
     }
 
@@ -234,23 +261,24 @@ class TripPlanController extends Controller
      *     )
      * )
      */
-    public function createPlan(Request $request){
+    public function createPlan(Request $request)
+    {
         $data = [
             "city_id" => $request->input("city_id"),
             "budget" => $request->input("budget"),
             "daterange" => $request->input("daterange"),
             "people" => $request->input("people"),
             "location" => $request->input("location"),
-            "author_id"=>Auth::id() ?? 2
+            "author_id" => Auth::id() ?? 2
         ];
         $city = City::query()->find($request->city_id);
-        if (!$city){
+        if (!$city) {
             return response()->json(['error' => 'City not found'], Response::HTTP_NOT_FOUND);
         }
         $name = $city->name;
         $data["json_data"] = json_encode($data);
 
-        $name = $name." · ".day_diff($data["daterange"]). " days";
+        $name = $name . " · " . day_diff($data["daterange"]) . " days";
         $data["name"] = $name;
 
         $data["image_url"] = $this->tripPlanService->get_thumb($name);
@@ -259,36 +287,37 @@ class TripPlanController extends Controller
     }
 
 
-    public function show(Plan $plan){
-        if (true){
+    public function show(Plan $plan)
+    {
+        if (true) {
 //        if (!$plan->json_data_result){
             $data = json_decode($plan["json_data"]);
             $dateRange = $data->daterange;
             $dateRangeDay = getDateRange($dateRange);
-            $locationPerDay = !empty($data->location) ? (int) $data->location : 3;
-            if ($locationPerDay === 4){
+            $locationPerDay = !empty($data->location) ? (int)$data->location : 3;
+            if ($locationPerDay === 4) {
                 $locationPerDay = mt_rand(4, 6);
             }
-            $locations = Location::with("category")->where("city_id",$data->city_id)->get();
+            $locations = Location::with("category")->where("city_id", $data->city_id)->get();
 
-            if (!count($locations)){
+            if (!count($locations)) {
                 $city = City::query()->find($data->city_id);
-                $this->tripPlanService->get_location_attractions($city->trip_advisor_id,$city,200);
+                $this->tripPlanService->get_location_attractions($city->trip_advisor_id, $city, 200);
             }
             $results = [];
             $indexLocation = 0;
-            foreach ($dateRangeDay as $day){
+            foreach ($dateRangeDay as $day) {
                 $results[$day] = [];
-                if (empty($locations[$indexLocation])){
+                if (empty($locations[$indexLocation])) {
                     break;
                 }
-                $timeRange = generateTimeSlots($locationPerDay+1);
-                for ($i = 0;$i < $locationPerDay;$i++){
-                    if (!empty($locations[$indexLocation])){
+                $timeRange = generateTimeSlots($locationPerDay + 1);
+                for ($i = 0; $i < $locationPerDay; $i++) {
+                    if (!empty($locations[$indexLocation])) {
 //                        $locations[$indexLocation]->category = $locations[$indexLocation]->category()->get();
                         $locations[$indexLocation]->photo = json_decode($locations[$indexLocation]->photo);
                         $locations[$indexLocation]->time = $timeRange[$i];
-                        array_push($results[$day],$locations[$indexLocation]->toArray());
+                        array_push($results[$day], $locations[$indexLocation]->toArray());
                         $indexLocation += 1;
                     } else break;
                 }
@@ -300,21 +329,22 @@ class TripPlanController extends Controller
         $plan->json_data = json_decode($plan->json_data);
 
         $colors = $this->colors;
-        if (count($colors) < count((array)$plan->json_data_result)){
-            $colors = array_merge($this->colors,randomHexColors(count((array)$plan->json_data_result)));
+        if (count($colors) < count((array)$plan->json_data_result)) {
+            $colors = array_merge($this->colors, randomHexColors(count((array)$plan->json_data_result)));
         }
         $plan->city = $plan->city()->first()->toArray();
-        return view("ai.show",["plan"=>$plan->toArray(),"colors"=>$colors]);
+        return view("ai.show", ["plan" => $plan->toArray(), "colors" => $colors]);
     }
 
-    public function getUSALocations(Request $request){
+    public function getUSALocations(Request $request)
+    {
         $iso3 = "USA";
-        $cities = City::query()->where("iso3",$iso3)->get();
-        foreach ($cities as $city){
+        $cities = City::query()->where("iso3", $iso3)->get();
+        foreach ($cities as $city) {
             $this->fillCityAdvisorId($city);
             $trip_advisor_id = $city->trip_advisor_id;
-            if ($trip_advisor_id){
-                $this->tripPlanService->get_location_attractions($trip_advisor_id,$city,200);
+            if ($trip_advisor_id) {
+                $this->tripPlanService->get_location_attractions($trip_advisor_id, $city, 200);
             }
         }
     }
@@ -325,17 +355,71 @@ class TripPlanController extends Controller
         return $excel->download(new PostsExport, 'posts.xlsx');
     }
 
-    public function locationsBetween(Request $request){
+    /**
+     * @OA\Get(
+     *     path="/web-api/v1/ai/trip-plan/wayspot",
+     *     tags={"trip plan"},
+     *     summary="wayspot from 2 cities with a radius of 10km",
+     *     operationId="locationsBetween",
+     *     @OA\Parameter(
+     *         name="from_city_id",
+     *         in="query",
+     *         description="id of the city from which you started moving",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="integer"
+     *         )
+     *     ),
+     *     @OA\Parameter(
+     *         name="to_city_id",
+     *         in="query",
+     *         description="id of the city where you end up moving",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="integer"
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful operation"
+     *     )
+     * )
+     */
+    public function locationsBetween(Request $request)
+    {
         $cityFrom = City::find($request->from_city_id);
         $cityTo = City::find($request->to_city_id);
-        $locations = Location::query()->whereIn("city_id",[$request->from_city_id,$request->to_city_id]);
-        if (count($locations)){
+        $radius = 0.0897; //10km
+        $count = Location::query()->whereIn("city_id", [$cityFrom->id, $cityTo->id])->count();
+        if ($count) {
             $cityFromLat = $cityFrom->lat;
             $cityFromLng = $cityFrom->lng;
+            $cityFromLngTop = (float)$cityFrom->lng + $radius;
+            $cityFromLngBot = (float)$cityFrom->lng - $radius;
 
             $cityToLat = $cityTo->lat;
             $cityToLng = $cityTo->lng;
-        } else{
+            $cityToLngTop= (float)$cityTo->lng + $radius;
+            $cityToLngBot= (float)$cityTo->lng - $radius;
+
+            $latLeft = max([$cityToLat,$cityFromLat]);
+            $latRight = min([$cityToLat,$cityFromLat]);
+            $lngTop = max([$cityFromLngTop,$cityToLngTop]);
+            $lngBot = max([$cityToLngBot,$cityFromLngBot]);
+
+            $locations = Location::query()
+                ->whereIn("city_id", [$request->from_city_id, $request->to_city_id])
+                ->where(function ($whereBuilder) use ($latRight,$lngTop,$latLeft,$lngBot) {
+                    $whereBuilder
+                        ->where("latitude",">",$latRight)
+                        ->where("latitude","<",$latLeft)
+                        ->where("longitude","<",$lngTop)
+                        ->where("longitude",">",$lngBot)
+                    ;
+                })
+                ->limit(10)->get();
+            return $locations;
+        } else {
             return response()->json(['error' => 'Cannot find locations between 2 cities'], Response::HTTP_NOT_FOUND);
         }
     }

@@ -50,7 +50,7 @@ class AllUsaLocationsSeeder extends Seeder
                 }
                 $trip_advisor_id = $city->trip_advisor_id;
                 if ($trip_advisor_id){
-                    $this->tripPlanService->get_location_attractions($trip_advisor_id,$city,10000);
+                    $this->tripPlanService->get_location_attractions($trip_advisor_id,$city,2000);
                 }
             }
         }

@@ -10,6 +10,31 @@
         "version": "1.0.0"
     },
     "paths": {
+        "/web-api/v1/ai/trip-plan/cities": {
+            "get": {
+                "tags": [
+                    "city"
+                ],
+                "summary": "Get city by keyword",
+                "operationId": "searchCities",
+                "parameters": [
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "ID of the city",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            }
+        },
         "/web-api/v1/ai/trip-plan/cities/{cityId}/locations": {
             "get": {
                 "tags": [
@@ -123,6 +148,40 @@
                                 }
                             }
                         }
+                    }
+                }
+            }
+        },
+        "/web-api/v1/ai/trip-plan/wayspot": {
+            "get": {
+                "tags": [
+                    "trip plan"
+                ],
+                "summary": "wayspot from 2 cities with a radius of 10km",
+                "operationId": "locationsBetween",
+                "parameters": [
+                    {
+                        "name": "from_city_id",
+                        "in": "query",
+                        "description": "id of the city from which you started moving",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "to_city_id",
+                        "in": "query",
+                        "description": "id of the city where you end up moving",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
                     }
                 }
             }
