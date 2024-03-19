@@ -260,8 +260,8 @@ class TripPlanController extends Controller
 
 
     public function show(Plan $plan){
-//        if (true){
-        if (!$plan->json_data_result){
+        if (true){
+//        if (!$plan->json_data_result){
             $data = json_decode($plan["json_data"]);
             $dateRange = $data->daterange;
             $dateRangeDay = getDateRange($dateRange);
@@ -283,7 +283,7 @@ class TripPlanController extends Controller
                     break;
                 }
                 $timeRange = generateTimeSlots($locationPerDay+1);
-                for ($i = 0;$i <= $locationPerDay;$i++){
+                for ($i = 0;$i < $locationPerDay;$i++){
                     if (!empty($locations[$indexLocation])){
 //                        $locations[$indexLocation]->category = $locations[$indexLocation]->category()->get();
                         $locations[$indexLocation]->photo = json_decode($locations[$indexLocation]->photo);
@@ -330,7 +330,11 @@ class TripPlanController extends Controller
         $cityTo = City::find($request->to_city_id);
         $locations = Location::query()->whereIn("city_id",[$request->from_city_id,$request->to_city_id]);
         if (count($locations)){
+            $cityFromLat = $cityFrom->lat;
+            $cityFromLng = $cityFrom->lng;
 
+            $cityToLat = $cityTo->lat;
+            $cityToLng = $cityTo->lng;
         } else{
             return response()->json(['error' => 'Cannot find locations between 2 cities'], Response::HTTP_NOT_FOUND);
         }
