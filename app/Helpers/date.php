@@ -113,7 +113,7 @@ function randomHexColors($limit) {
 function generateTimeSlots($limit) {
     $totalHours = 24;
     $minSlotDuration = 30; // 30 minutes in minutes
-    $maxSlotDuration = 240; // 4 hours in minutes
+    $maxSlotDuration = 180; // 3 hours in minutes
 
     // Convert min slot duration to seconds
     $minSlotDurationSeconds = $minSlotDuration * 60;
@@ -133,8 +133,15 @@ function generateTimeSlots($limit) {
     // Generate time slots
     for ($i = 0; $i < $totalSlots && $currentTime < strtotime("24:00"); $i++) {
         $currentTime += 30 * 60;
-        // Generate a random slot duration between min and max
-        $slotDurationSeconds = mt_rand($minSlotDurationSeconds, $maxSlotDurationSeconds);
+
+        // Calculate the number of possible slots within the range of min and max slot duration
+        $possibleSlots = ($maxSlotDurationSeconds - $minSlotDurationSeconds) / (15 * 60) + 1;
+
+        // Generate a random slot index between 0 and the number of possible slots
+        $slotIndex = mt_rand(0, $possibleSlots - 1);
+
+        // Calculate the slot duration based on the slot index
+        $slotDurationSeconds = $minSlotDurationSeconds + $slotIndex * (15 * 60);
 
         // Calculate end time of slot
         $endTime = min($currentTime + $slotDurationSeconds, strtotime("24:00"));

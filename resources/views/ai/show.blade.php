@@ -75,44 +75,47 @@
                             <div class="h5">This location is no longer a tourist area</div>
                         @endif
                         <div class="border-start position-relative px-3 position-relative">
-                            @foreach($timePlan as $job)
-                                <div class="row pt-4">
-                                    <div class="col-md-4 col-xl-2 col-4">
-                                        <div class="card-img w-100 rounded-10" style="background-image: url('{{!empty($job->photo->images->large->url) ? $job->photo->images->large->url : getImageError()}}')"></div>
-                                    </div>
-                                    <div class="col-md-8 col-xl-10 col-8">
-                                        <div class="d-flex align-items-center">
-                                            <span class="btn btn-sm rounded-2 bg-gray-200 pointer-event-none-all">{{$job->time->start}}</span>
-                                            <i class="fas fa-arrow-right mx-2 fs-5 gray-700"></i>
-                                            <span class="btn btn-sm rounded-2 bg-gray-200 pointer-event-none-all">{{$job->time->end}}</span>
+                            @foreach($timePlan as $key=>$job)
+                                <div class="position-relative">
+                                    <div class="row pt-4">
+                                        <div class="col-md-4 col-xl-2 col-4">
+                                            <div class="card-img w-100 rounded-10" style="background-image: url('{{!empty($job->photo->images->large->url) ? $job->photo->images->large->url : getImageError()}}')"></div>
                                         </div>
-                                        <div class="fs-5 fw-bold mt-3">
-                                            {{$job->name}}
-                                        </div>
-                                        <div class="lh-sm my-2">
-                                            <div class="mb-2">
-                                                <small class="badge bg-gray-300 gray-700">{{$job->category->name}}</small>
+                                        <div class="col-md-8 col-xl-10 col-8">
+                                            <div class="d-flex align-items-center">
+                                                <span class="btn btn-sm rounded-2 bg-gray-200 pointer-event-none-all">{{$job->time->start}}</span>
+                                                <i class="fas fa-arrow-right mx-2 fs-5 gray-700"></i>
+                                                <span class="btn btn-sm rounded-2 bg-gray-200 pointer-event-none-all">{{$job->time->end}}</span>
                                             </div>
-                                            <small>
-                                                {{$job->description}}
-                                            </small>
-                                        </div>
-                                        <div class="fw-bold gray-600">
+                                            <div class="fs-5 fw-bold mt-3">
+                                                {{$job->name}}
+                                            </div>
+                                            <div class="lh-sm my-2">
+                                                <div class="mb-2">
+                                                    <small class="badge bg-gray-300 gray-700">{{$job->category->name}}</small>
+                                                </div>
+                                                <small>
+                                                    {{$job->description}}
+                                                </small>
+                                            </div>
+                                            <div class="fw-bold gray-600">
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="d-flex align-items-center my-3 gray-500 fw-light text-nowrap">
-                                    <i class="fal fa-cars me-2"></i>
-                                    30 min <span class="d-md-inline-block d-none text-nowrap">&nbsp; to the next place</span>
-                                    <div>
-                                        <div class="circle-dot mx-2"></div>
+                                    <div class="d-flex align-items-center my-3 gray-500 fw-light text-nowrap">
+                                        <i class="fal fa-cars me-2"></i>
+                                        30 min <span class="d-md-inline-block d-none text-nowrap">&nbsp; to the next place</span>
+                                        <div>
+                                            <div class="circle-dot mx-2"></div>
+                                        </div>
+                                        <a target="_blank" href="https://www.google.com/maps/search/?api=1&query={{$job->latitude.",".$job->longitude}}" class="text-link text-nowrap">Check direction</a>
                                     </div>
-                                    <a target="_blank" href="https://www.google.com/maps/search/?api=1&query={{$job->latitude.",".$job->longitude}}" class="text-link text-nowrap">Check direction</a>
+                                    @if(!empty($timePlan))
+                                        <div style="width: 8px;height: 8px;top: 80px;left: -20.5px" class="logo bg-gray-400 position-absolute"></div>
+                                    @endif
                                 </div>
                             @endforeach
-                                @if(!empty($timePlan))
-                                    <div style="width: 8px;height: 8px;top: 80px;left: -4.5px" class="logo bg-gray-400 position-absolute"></div>
-                                @endif
+
                         </div>
                     </div>
                 </div>

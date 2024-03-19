@@ -55,7 +55,7 @@
     "src": "resources/sass/admin.scss"
   },
   "resources/sass/app.scss": {
-    "file": "assets/app-0192fdde.css",
+    "file": "assets/app-cda7701c.css",
     "isEntry": true,
     "src": "resources/sass/app.scss"
   }

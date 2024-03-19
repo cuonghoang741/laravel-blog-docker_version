@@ -148,6 +148,7 @@ $routePublicV1 = function () {
                 Route::get('/',[\App\Http\Controllers\TripPlanController::class,'searchCities']);
                 Route::get('/{city:id}/fill-id',[\App\Http\Controllers\TripPlanController::class,'fillCityAdvisorId']);
                 Route::get('/{city:id}/locations',[\App\Http\Controllers\TripPlanController::class,'cityLocations']);
+                Route::get('/{city:id}/locations/force',[\App\Http\Controllers\TripPlanController::class,'cityLocationsForce']);
             });
         });
     });

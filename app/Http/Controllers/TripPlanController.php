@@ -109,6 +109,13 @@ class TripPlanController extends Controller
     }
 
 
+    public function cityLocationsForce(City $city){
+        $locations = Location::query()->where("city_id",$city->id)->delete();
+        $this->tripPlanService->get_location_attractions($city->trip_advisor_id,$city,100000);
+
+        return $locations;
+    }
+
     public function test(){
         $locations = array(
             array(
@@ -166,11 +173,16 @@ class TripPlanController extends Controller
 
     public function show(Plan $plan){
         if (true){
+//        if (!$plan->json_data_result){
             $data = json_decode($plan["json_data"]);
             $dateRange = $data->daterange;
             $dateRangeDay = getDateRange($dateRange);
             $locationPerDay = !empty($data->location) ? (int) $data->location : 3;
+            if ($locationPerDay === 4){
+                $locationPerDay = mt_rand(4, 6);
+            }
             $locations = Location::with("category")->where("city_id",$data->city->id)->get();
+
             if (!count($locations)){
                 $city = City::query()->find($data->city->id);
                 $this->tripPlanService->get_location_attractions($city->trip_advisor_id,$city,200);
@@ -204,5 +216,17 @@ class TripPlanController extends Controller
             $colors = array_merge($this->colors,randomHexColors(count((array)$plan->json_data_result)));
         }
         return view("ai.show",["plan"=>$plan->toArray(),"colors"=>$colors]);
+    }
+
+    public function getUSALocations (Request $request){
+        $iso3 = "USA";
+        $cities = City::query()->where("iso3",$iso3)->get();
+        foreach ($cities as $city){
+            $this->fillCityAdvisorId($city);
+            $trip_advisor_id = $city->trip_advisor_id;
+            if ($trip_advisor_id){
+                $this->tripPlanService->get_location_attractions($trip_advisor_id,$city,200);
+            }
+        }
     }
 }
