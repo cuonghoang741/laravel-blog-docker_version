@@ -21,10 +21,6 @@ use Illuminate\Http\Response;
  *     title="Tên API",
  *     version="1.0.0",
  *     description="Mô tả API của bạn",
- *     @OA\Contact(
- *         email="email@domain.com",
- *         name="Tên liên hệ"
- *     ),
  *     @OA\License(
  *         name="Apache 2.0",
  *         url="http://www.apache.org/licenses/LICENSE-2.0.html"

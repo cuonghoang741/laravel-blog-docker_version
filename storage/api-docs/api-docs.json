@@ -3,10 +3,6 @@
     "info": {
         "title": "Tên API",
         "description": "Mô tả API của bạn",
-        "contact": {
-            "name": "Tên liên hệ",
-            "email": "email@domain.com"
-        },
         "license": {
             "name": "Apache 2.0",
             "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
