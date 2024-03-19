@@ -6,6 +6,8 @@ use App\Models\Location;
 use App\Models\LocationCategory;
 use App\Models\LocationLocationSubcategory;
 use App\Models\LocationSubcategory;
+use App\Models\Post;
+use Maatwebsite\Excel\Excel;
 
 class TripPlanService
 {
@@ -236,5 +238,6 @@ class TripPlanService
             return "An error occurred: " . $e->getMessage();
         }
     }
+
 
 }

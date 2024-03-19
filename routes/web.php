@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', [PostController::class, 'index'])->name('home');
+Route::get('/export', [\App\Http\Controllers\TripPlanController::class, 'exportPosts']);
 Route::get('/posts/feed', [PostFeedController::class, 'index'])->name('posts.feed');
 Route::get('/posts', function (){
     $posts = \App\Models\Post::all();

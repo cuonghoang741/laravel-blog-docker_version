@@ -2,15 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\PostsExport;
 use App\Models\City;
 use App\Models\Location;
 use App\Models\LocationCategory;
 use App\Models\LocationLocationSubcategory;
 use App\Models\LocationSubcategory;
 use App\Models\Plan;
+use App\Models\Post;
 use App\Services\TripPlanService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Maatwebsite\Excel\Excel;
 
 class TripPlanController extends Controller
 {
@@ -218,7 +221,7 @@ class TripPlanController extends Controller
         return view("ai.show",["plan"=>$plan->toArray(),"colors"=>$colors]);
     }
 
-    public function getUSALocations (Request $request){
+    public function getUSALocations(Request $request){
         $iso3 = "USA";
         $cities = City::query()->where("iso3",$iso3)->get();
         foreach ($cities as $city){
@@ -228,5 +231,11 @@ class TripPlanController extends Controller
                 $this->tripPlanService->get_location_attractions($trip_advisor_id,$city,200);
             }
         }
+    }
+
+
+    public function exportPosts(Excel $excel)
+    {
+        return $excel->download(new PostsExport, 'posts.xlsx');
     }
 }
