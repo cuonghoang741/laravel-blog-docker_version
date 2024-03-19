@@ -379,6 +379,15 @@ class TripPlanController extends Controller
      *             type="integer"
      *         )
      *     ),
+     *     @OA\Parameter(
+     *         name="radius",
+     *         in="query",
+     *         description="Arc radius finds surrounding wayspot. The unit is kilometers (Km). default is 10",
+     *         required=false,
+     *         @OA\Schema(
+     *             type="integer"
+     *         )
+     *     ),
      *     @OA\Response(
      *         response=200,
      *         description="Successful operation"
@@ -389,7 +398,7 @@ class TripPlanController extends Controller
     {
         $cityFrom = City::find($request->from_city_id);
         $cityTo = City::find($request->to_city_id);
-        $radius = 0.0897; //10km
+        $radius = !empty($request->radius) ? ((int)$request->radius / 111.32) : 0.0897; //10km
         $count = Location::query()->whereIn("city_id", [$cityFrom->id, $cityTo->id])->count();
         if ($count) {
             $cityFromLat = $cityFrom->lat;
@@ -417,7 +426,7 @@ class TripPlanController extends Controller
                         ->where("longitude",">",$lngBot)
                     ;
                 })
-                ->limit(20)->get();
+                ->orderBy("num_reviews","desc")->get();
             return $locations;
         } else {
             return response()->json(['error' => 'Cannot find locations between 2 cities'], Response::HTTP_NOT_FOUND);

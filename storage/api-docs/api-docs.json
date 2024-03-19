@@ -177,6 +177,15 @@
                         "schema": {
                             "type": "integer"
                         }
+                    },
+                    {
+                        "name": "radius",
+                        "in": "query",
+                        "description": "Arc radius finds surrounding wayspot. The unit is kilometers (Km). default is 10",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
                     }
                 ],
                 "responses": {
