@@ -282,7 +282,6 @@ class TripPlanController extends Controller
         $data["name"] = $name;
 
         $data["image_url"] = $this->tripPlanService->get_thumb($name);
-
         return Plan::create($data);;
     }
 
@@ -402,12 +401,10 @@ class TripPlanController extends Controller
         $count = Location::query()->whereIn("city_id", [$cityFrom->id, $cityTo->id])->count();
         if ($count) {
             $cityFromLat = $cityFrom->lat;
-            $cityFromLng = $cityFrom->lng;
             $cityFromLngTop = (float)$cityFrom->lng + $radius;
             $cityFromLngBot = (float)$cityFrom->lng - $radius;
 
             $cityToLat = $cityTo->lat;
-            $cityToLng = $cityTo->lng;
             $cityToLngTop= (float)$cityTo->lng + $radius;
             $cityToLngBot= (float)$cityTo->lng - $radius;
 
@@ -431,5 +428,12 @@ class TripPlanController extends Controller
         } else {
             return response()->json(['error' => 'Cannot find locations between 2 cities'], Response::HTTP_NOT_FOUND);
         }
+    }
+
+    public function generateMap(Request $request){
+        $locations = $this->locationsBetween($request);
+        $map = $this->tripPlanService->generate_map_html($locations);
+
+        return view("ai/wayspot",["map"=>$map]);
     }
 }

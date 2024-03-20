@@ -33,12 +33,13 @@ class TripPlanService
         foreach ($locations as $location) {
             $lat = floatval($location['latitude']);
             $lng = floatval($location['longitude']);
-            $img_url = $location['photo']['images']['thumbnail']['url'];
+            $location->photo = json_decode($location->photo);
+            $img_url = !empty($location->photo->images->thumbnail->url) ? $location->photo->images->thumbnail->url : '';
             $name = $location['name'];
             $color_code = isset($location['color_code']) ? $location['color_code'] : 'white';
             $cluster_id = isset($location['cluster_id']) ? intval($location['cluster_id']) + 1 : 999 + 1;
-            $html_content = "<div style='position: relative;'><img src='$img_url' alt='$name' style='width:50px;height:50px;border: solid $color_code 4px;'><p style='padding:5px 2px;background:$color_code;color:white'>$cluster_id</p><div style='position: absolute;bottom: -22px;color: white;background: #00000057;text-wrap: nowrap;padding: 2px 5px;left: 50%;transform: translateX(-50%);'>$name</div></div>";
-            $map .= "var icon = L.divIcon({html: '$html_content'});";
+            $html_content = "<div style=\'position: relative;\'><img src='$img_url' alt='$name' style='width:50px;height:50px;border: solid $color_code 4px;'><p style='padding:5px 2px;background:$color_code;color:white'>$cluster_id</p><div style='position: absolute;bottom: -22px;color: white;background: #00000057;text-wrap: nowrap;padding: 2px 5px;left: 50%;transform: translateX(-50%);'>$name</div></div>";
+            $map .= "var icon = L.divIcon({html: \"$html_content\"});";
             $map .= "L.marker([$lat, $lng], {icon: icon}).addTo(featureGroup);";
         }
 

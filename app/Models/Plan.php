@@ -22,6 +22,6 @@ class Plan extends Model
 
     public function city(): HasOne
     {
-        return $this->hasOne(City::class, 'id');
+        return $this->hasOne(City::class, 'id','city_id');
     }
 }
