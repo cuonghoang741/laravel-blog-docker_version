@@ -7,7 +7,9 @@
           integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
           crossorigin=""/>
     <style>
-        #map { height: 80vh; }
+        #map {
+            height: 80vh;
+        }
     </style>
 @endpush
 
@@ -30,6 +32,13 @@
                 <label for="select2-dropdown-city-from" class="mb-3">Max locations (default: 200)</label>
                 <br>
                 <input id="limit-locations" type="number" class="form-control" placeholder="Default: 200" value="200">
+            </div>
+            <div>
+                <label for="select2-dropdown-city-from" class="mb-3">Radius (default: 10km)</label>
+                <br>
+                <input id="limit-radius" type="number" class="form-control"
+                       placeholder="Arc radius finds surrounding wayspot. The unit is kilometers (Km). default is 10"
+                       value="10">
             </div>
         </div>
 
@@ -86,20 +95,21 @@
                 integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
                 crossorigin=""></script>
         <script>
-            function initMap(locations,cityFrom,cityTo){
+            var map;
+            function initMap(locations, cityFrom, cityTo) {
                 const avgLat = (parseFloat(cityFrom.lat) + parseFloat(cityTo.lat)) / 2;
                 const avgLng = (parseFloat(cityFrom.lng) + parseFloat(cityTo.lng)) / 2;
 
 
-                var map = L.map('map').setView([avgLng, avgLat], 15);
+                map = L.map('map').setView([avgLng, avgLat], 15);
                 L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
                     maxZoom: 19,
                     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
                 }).addTo(map);
 
 
-                $.each(locations,function (index,item) {
-                    const position = [item.latitude,item.longitude];
+                $.each(locations, function (index, item) {
+                    const position = [item.latitude, item.longitude];
                     console.log(item)
                     item.photo = JSON.parse(item.photo)
                     var marker = L.marker(position).addTo(map);
@@ -109,7 +119,7 @@
 
                     const popup = `<div>
                         <img src="${imgUrl}" class="w-100 rounded-3">
-                        <div class="fw-bold mt-2">${name}</div>
+                        <div class="fw-bold mt-2">${name} - ${item?.location_string}</div>
                         <span class="badge bg-success fw-bold">Rating: ${rating}</span>
                         <div>${item?.description}</div>
                     </div>`
@@ -120,7 +130,7 @@
                         color: 'red',
                         fillColor: '#f03',
                         fillOpacity: 0.5,
-                        radius: rating
+                        radius: rating * 3
                     }).addTo(map);
 
                     circle.bindPopup(popup);
@@ -137,35 +147,46 @@
                 // });
 
                 // marker cityFrom
-                var marker = L.marker([cityFrom.lat,cityFrom.lng]).addTo(map);
+                var marker = L.marker([cityFrom.lat, cityFrom.lng]).addTo(map);
                 marker.bindPopup(`<b>Start point: ${cityFrom.name}</b>`).openPopup();
 
                 // marker cityTo
-                var marker = L.marker([cityTo.lat,cityTo.lng]).addTo(map);
+                var marker = L.marker([cityTo.lat, cityTo.lng]).addTo(map);
                 marker.bindPopup(`<b>End point: ${cityTo.name}</b>`).openPopup();
 
+                var polygon = L.polygon([
+                    [cityTo.lat, cityTo.lng],
+                    [cityTo.lat, cityFrom.lng],
+                    [cityFrom.lat, cityFrom.lng],
+                    [cityFrom.lat, cityTo.lng],
+                ]).addTo(map);
 
                 // Determine bounding box
-                var bounds = locations.map(item=>([item.latitude,item.longitude])).reduce(function(bounds, loc) {
+                var bounds = locations.map(item => ([item.latitude, item.longitude])).reduce(function (bounds, loc) {
                     return bounds.extend(loc);
                 }, L.latLngBounds(locations[0], locations[0]));
 
-                bounds.extend([cityTo.lng,cityTo.lat])
-                bounds.extend([cityTo.lng,cityTo.lat])
+                // bounds.extend([cityTo.lng, cityTo.lat])
+                // bounds.extend([cityTo.lng, cityTo.lat])
 
                 // Set map view to the bounding box and adjust zoom level
                 map.fitBounds(bounds);
             }
 
-            function generateMap(){
+            function generateMap() {
+                map?.remove();
+                map = null;
+                $("#map").html("");
                 const city_from = $("#select2-dropdown-city-from").val();
                 const city_to = $("#select2-dropdown-city-to").val();
                 const limit = $("#limit-locations").val();
-                $(".btn-create-map").attr("disabled",true);
+                const limitRadius = $("#limit-radius").val();
+                $(".btn-create-map").attr("disabled", true);
 
-                axios.get(BASE_API + `/ai/trip-plan/wayspot?&from_city_id=${city_from}&to_city_id=${city_to}&limit=${limit}`)
-                    .then(r=>{
+                axios.get(BASE_API + `/ai/trip-plan/wayspot?&from_city_id=${city_from}&to_city_id=${city_to}&limit=${limit}&radius=${limitRadius}`)
+                    .then(r => {
                         let locations = r.data.locations;
+
                         function compare(a, b) {
                             if (a.numb_review < b.numb_review) {
                                 return -1;
@@ -175,12 +196,13 @@
                             }
                             return 0;
                         }
+
                         locations = locations.sort(compare);
                         const cityFrom = r.data.city_from;
                         const cityTo = r.data.city_to;
-                        initMap(locations,cityFrom,cityTo)
-                    }).finally(()=>{
-                    $(".btn-create-map").attr("disabled",false);
+                        initMap(locations, cityFrom, cityTo)
+                    }).finally(() => {
+                    $(".btn-create-map").attr("disabled", false);
                 })
             }
         </script>

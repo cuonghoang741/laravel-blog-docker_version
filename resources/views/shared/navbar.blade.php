@@ -40,6 +40,11 @@
                         Planner AI
                     </a>
                 </li>
+                <li class="nav-item px-3">
+                    <a href="{{ route('wayspot') }}" class="nav-link">
+                        Wayspot
+                    </a>
+                </li>
                 @guest
                     <li class="nav-item px-3">
                         <a href="{{ route('login') }}" class="nav-link">

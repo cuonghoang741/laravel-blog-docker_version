@@ -40,7 +40,7 @@ Route::prefix('/ai')->group(function () {
     Route::prefix('/trip-planner')->group(function () {
         Route::get("/",[\App\Http\Controllers\TripPlanController::class,"index"])->name("trip-planner");
         Route::post("/",[\App\Http\Controllers\TripPlanController::class,"createPlan"]);
-        Route::get("/wayspot",[\App\Http\Controllers\TripPlanController::class,"generateMap"]);
+        Route::get("/wayspot",[\App\Http\Controllers\TripPlanController::class,"generateMap"])->name("wayspot");
         Route::get("/{plan}",[\App\Http\Controllers\TripPlanController::class,"show"]);
     });
 });
