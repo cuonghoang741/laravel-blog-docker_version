@@ -250,7 +250,6 @@
             }
 
             async function onSelectCity(city) {
-                console.log(city)
                 await fillId(city);
                 getLocations(city);
             }

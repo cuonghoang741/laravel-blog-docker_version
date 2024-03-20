@@ -109,3 +109,19 @@ function quickToastMixin(option="success", title, config={link_href: "", link_te
 function showSoon() {
   quickToastMixin("info","Feature under development")
 }
+
+async function onSelectCity(city) {
+  await fillId(city);
+  getLocations(city);
+}
+
+
+async function fillId(city) {
+  if (!city.trip_advisor_id) {
+    return await axios.get(BASE_API + `/ai/trip-plan/cities/${city.id}/fill-id`)
+  }
+}
+
+function getLocations(city) {
+  axios.get(BASE_API + `/ai/trip-plan/cities/${city.id}/locations`);
+}

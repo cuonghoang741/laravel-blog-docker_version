@@ -74,16 +74,22 @@ class TripPlanController extends Controller
     public function searchCities(Request $request)
     {
         $search = $request->input("search");
+        $ios3 = $request->input("ios3");
 
-        $cities = City::query()->where(function ($whereBuilder) use ($search) {
+        $query = City::query()->where(function ($whereBuilder) use ($search) {
             return $whereBuilder->where("name", "like", "%$search%")
                 ->orWhere("country", "like", "%$search%")
                 ->orWhere("city_ascii", "like", "%$search%")
                 ->orWhere("iso2", "like", "%$search%")
                 ->orWhere("iso3", "like", "%$search%")
                 ->orWhere("admin_name", "like", "%$search%");
-        })->limit(5)->get();
+        });
 
+        if (!empty($ios3)){
+            $query = $query->where("iso3","like", "%$ios3%");
+        }
+
+        $cities = $query->limit(5)->get();
         return $cities;
     }
 
@@ -399,6 +405,9 @@ class TripPlanController extends Controller
         $cityTo = City::find($request->to_city_id);
         $radius = !empty($request->radius) ? ((int)$request->radius / 111.32) : 0.0897; //10km
         $count = Location::query()->whereIn("city_id", [$cityFrom->id, $cityTo->id])->count();
+
+        $limit = !empty($request->limit) ? $request->limit : 200;
+
         if ($count) {
             $cityFromLat = $cityFrom->lat;
             $cityFromLngTop = (float)$cityFrom->lng + $radius;
@@ -408,32 +417,35 @@ class TripPlanController extends Controller
             $cityToLngTop= (float)$cityTo->lng + $radius;
             $cityToLngBot= (float)$cityTo->lng - $radius;
 
-            $latLeft = max([$cityToLat,$cityFromLat]);
-            $latRight = min([$cityToLat,$cityFromLat]);
+            $latLeft = min([$cityToLat,$cityFromLat]);
+            $latRight = max([$cityToLat,$cityFromLat]);
             $lngTop = max([$cityFromLngTop,$cityToLngTop]);
-            $lngBot = max([$cityToLngBot,$cityFromLngBot]);
+            $lngBot = min([$cityToLngBot,$cityFromLngBot]);
 
             $locations = Location::query()
-                ->whereIn("city_id", [$request->from_city_id, $request->to_city_id])
                 ->where(function ($whereBuilder) use ($latRight,$lngTop,$latLeft,$lngBot) {
                     $whereBuilder
-                        ->where("latitude",">",$latRight)
-                        ->where("latitude","<",$latLeft)
+                        ->where("latitude",">",$latLeft)
+                        ->where("latitude","<",$latRight)
                         ->where("longitude","<",$lngTop)
                         ->where("longitude",">",$lngBot)
                     ;
                 })
-                ->orderBy("num_reviews","desc")->get();
-            return $locations;
+                ->orderBy("num_reviews","desc")->limit($limit)->get();
+
+            return response()->json([
+                "total_location"=>count($locations),
+                "city_from"=>$cityFrom,
+                "city_to"=>$cityTo,
+                "locations"=>$locations
+            ], 200);
         } else {
             return response()->json(['error' => 'Cannot find locations between 2 cities'], Response::HTTP_NOT_FOUND);
         }
     }
 
     public function generateMap(Request $request){
-        $locations = $this->locationsBetween($request);
-        $map = $this->tripPlanService->generate_map_html($locations);
-
-        return view("ai/wayspot",["map"=>$map]);
+//        $locations = $this->locationsBetween($request);
+        return view("ai/wayspot");
     }
 }

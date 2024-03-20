@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "77883c31ebb012d9aa43725a671093e0",
+    "content-hash": "523f0ffda260a31010fae20fba7c3dc9",
     "packages": [
         {
             "name": "barryvdh/laravel-debugbar",
@@ -1370,6 +1370,50 @@
             "time": "2023-10-12T05:21:21+00:00"
         },
         {
+            "name": "ginocampra/laravel-leaflet",
+            "version": "1.0.6",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ginocampra/laravel-leaflet.git",
+                "reference": "bc17009bbe93950dbdf80861df77cb8d93877ca8"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ginocampra/laravel-leaflet/zipball/bc17009bbe93950dbdf80861df77cb8d93877ca8",
+                "reference": "bc17009bbe93950dbdf80861df77cb8d93877ca8",
+                "shasum": ""
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Ginocampra\\LaravelLeaflet\\LaravelLeafletServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Ginocampra\\LaravelLeaflet\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Gino Campra",
+                    "email": "gino@gcampra.com.br"
+                }
+            ],
+            "description": "Allows you to create pages with Leaflet maps in an integrated way with Laravel",
+            "support": {
+                "issues": "https://github.com/ginocampra/laravel-leaflet/issues",
+                "source": "https://github.com/ginocampra/laravel-leaflet/tree/1.0.6"
+            },
+            "time": "2024-02-16T14:03:37+00:00"
+        },
+        {
             "name": "graham-campbell/result-type",
             "version": "v1.1.2",
             "source": {
@@ -2578,6 +2622,32 @@
                 "source": "https://github.com/laravel/tinker/tree/v2.8.2"
             },
             "time": "2023-08-15T14:27:00+00:00"
+        },
+        {
+            "name": "leaflet/leaflet",
+            "version": "v1.4.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/aissasell/leaflet.git",
+                "reference": "7eadefcbd4d8bbb9af36a2b78186e6d068afa177"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/aissasell/leaflet/zipball/7eadefcbd4d8bbb9af36a2b78186e6d068afa177",
+                "reference": "7eadefcbd4d8bbb9af36a2b78186e6d068afa177",
+                "shasum": ""
+            },
+            "type": "library",
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-2-Clause"
+            ],
+            "description": "an open-source JavaScript library for mobile-friendly interactive maps",
+            "support": {
+                "issues": "https://github.com/aissasell/leaflet/issues",
+                "source": "https://github.com/aissasell/leaflet/tree/v1.4.0"
+            },
+            "time": "2019-03-23T14:27:52+00:00"
         },
         {
             "name": "league/commonmark",

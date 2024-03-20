@@ -15,37 +15,40 @@ class TripPlanService
     {
     }
 
-    public function generate_map_html($locations) {
+    function generate_map_html($locations) {
         // Create a base map centered on the first location
-        $map = "<div id='map' style='width: 100%; height: 500px;'></div>";
-        $map .= "<script>";
-        $map .= "var map = L.map('map').setView([" . floatval($locations[0]['latitude']) . ", " . floatval($locations[0]['longitude']) . "], 12);";
-
-        // Add tile layer
-        $map .= "L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {";
-        $map .= "'attribution': '© <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors'";
-        $map .= "}).addTo(map);";
+        $map = new LeafletMap(array(
+            'center' => array(floatval($locations[0]['latitude']), floatval($locations[0]['longitude'])),
+            'zoom' => 12
+        ));
 
         // Create a feature group to store markers
-        $map .= "var featureGroup = L.featureGroup().addTo(map);";
+        $feature_group = new LeafletFeatureGroup(array('name' => "My Markers"));
 
         // Add custom markers to the feature group
         foreach ($locations as $location) {
             $lat = floatval($location['latitude']);
             $lng = floatval($location['longitude']);
-            $location->photo = json_decode($location->photo);
-            $img_url = !empty($location->photo->images->thumbnail->url) ? $location->photo->images->thumbnail->url : '';
+            $img_url = $location['photo']['images']['thumbnail']['url'];
             $name = $location['name'];
             $color_code = isset($location['color_code']) ? $location['color_code'] : 'white';
             $cluster_id = isset($location['cluster_id']) ? intval($location['cluster_id']) + 1 : 999 + 1;
-            $html_content = "<div style=\'position: relative;\'><img src='$img_url' alt='$name' style='width:50px;height:50px;border: solid $color_code 4px;'><p style='padding:5px 2px;background:$color_code;color:white'>$cluster_id</p><div style='position: absolute;bottom: -22px;color: white;background: #00000057;text-wrap: nowrap;padding: 2px 5px;left: 50%;transform: translateX(-50%);'>$name</div></div>";
-            $map .= "var icon = L.divIcon({html: \"$html_content\"});";
-            $map .= "L.marker([$lat, $lng], {icon: icon}).addTo(featureGroup);";
+            $html_content = '<div style="position: relative;"><img src="' . $img_url . '" alt="' . $name . '" style="width:50px;height:50px;border: solid ' . $color_code . ' 4px;"><p style="padding:5px 2px;background:' . $color_code . ';color:white">' . $cluster_id . '</p><div style="position: absolute;bottom: -22px;color: white;background: #00000057;text-wrap: nowrap;padding: 2px 5px;left: 50%;transform: translateX(-50%);">' . $name . '</div></div>';
+            $icon = new LeafletDivIcon(array('html' => $html_content));
+            $marker = $feature_group->addChild(new LeafletMarker(array(
+                'lat' => $lat,
+                'lng' => $lng,
+                'icon' => $icon
+            )));
         }
 
-        $map .= "</script>";
+        // Add feature group to the map
+        $map->addLayer($feature_group);
 
-        return $map;
+        // Get the HTML representation of the map
+        $html_output = $map->getHTML();
+
+        return $html_output;
     }
 
     public function get_location_id($query) {

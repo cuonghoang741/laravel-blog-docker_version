@@ -2,137 +2,187 @@
 
 @push("styles")
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css"/>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+          crossorigin=""/>
+    <style>
+        #map { height: 80vh; }
+    </style>
 @endpush
 
 @section('content')
     <div class="container min-vh-100">
-        {!! $map !!}
+        <h1 class="app-title fw-bold text-center pt-xl-5 pt-md-4">Let's Plan Your Journey!</h1>
+
+        <div class="row row-cols-md-2 g-4">
+            <div class="form-group mt-5">
+                <label for="select2-dropdown-city-from" class="mb-3">Where do you want to go from?</label>
+                <br>
+                <select id="select2-dropdown-city-from" class="w-100 py-4"></select>
+            </div>
+            <div class="form-group mt-5">
+                <label for="select2-dropdown-city-to" class="mb-3">Where do you want to go to?</label>
+                <br>
+                <select id="select2-dropdown-city-to" class="w-100 py-4"></select>
+            </div>
+            <div>
+                <label for="select2-dropdown-city-from" class="mb-3">Max locations (default: 200)</label>
+                <br>
+                <input id="limit-locations" type="number" class="form-control" placeholder="Default: 200" value="200">
+            </div>
+        </div>
+
+        <div class="my-4 d-flex justify-content-end">
+            <button type="button" onclick="generateMap()" class="btn-create-map btn bg-app btn-app text-white">Generate
+                Map
+            </button>
+        </div>
+
+        <div id="map"></div>
 
     </div>
-    <script>
-        var map = L.map('map').setView([11.041443, 106.62716], 12);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {'attribution': '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'}).addTo(map);
-        var featureGroup = L.featureGroup().addTo(map);
-        var icon = L.divIcon({html: "<div style=\'position: relative;\'><img src='https://media-cdn.tripadvisor.com/media/photo-t/01/72/73/26/caption.jpg' alt='Dai Nam Zoo' style='width:50px;height:50px;border: solid white 4px;'><p style='padding:5px 2px;background:white;color:white'>1000</p><div style='position: absolute;bottom: -22px;color: white;background: #00000057;text-wrap: nowrap;padding: 2px 5px;left: 50%;transform: translateX(-50%);'>Dai Nam Zoo</div></div>"});
-        L.marker([11.041443, 106.62716], {icon: icon}).addTo(featureGroup);
-        var icon = L.divIcon({html: "<div style=\'position: relative;\'><img src='https://media-cdn.tripadvisor.com/media/photo-t/0b/17/6d/08/20160428-123856-largejpg.jpg' alt='Tan Dinh Market' style='width:50px;height:50px;border: solid white 4px;'><p style='padding:5px 2px;background:white;color:white'>1000</p><div style='position: absolute;bottom: -22px;color: white;background: #00000057;text-wrap: nowrap;padding: 2px 5px;left: 50%;transform: translateX(-50%);'>Tan Dinh Market</div></div>"});
-        L.marker([10.789771, 106.69], {icon: icon}).addTo(featureGroup);
-        var icon = L.divIcon({html: "<div style=\'position: relative;\'><img src='https://media-cdn.tripadvisor.com/media/photo-t/16/aa/7c/e2/photo0jpg.jpg' alt='Museum of Vietnamese History' style='width:50px;height:50px;border: solid white 4px;'><p style='padding:5px 2px;background:white;color:white'>1000</p><div style='position: absolute;bottom: -22px;color: white;background: #00000057;text-wrap: nowrap;padding: 2px 5px;left: 50%;transform: translateX(-50%);'>Museum of Vietnamese History</div></div>"});
-        L.marker([10.78796, 106.70484], {icon: icon}).addTo(featureGroup);
-        var icon = L.divIcon({html: "<div style=\'position: relative;\'><img src='https://media-cdn.tripadvisor.com/media/photo-t/12/d3/38/2e/thao-silk-tailor.jpg' alt='Thao Silk' style='width:50px;height:50px;border: solid white 4px;'><p style='padding:5px 2px;background:white;color:white'>1000</p><div style='position: absolute;bottom: -22px;color: white;background: #00000057;text-wrap: nowrap;padding: 2px 5px;left: 50%;transform: translateX(-50%);'>Thao Silk</div></div>"});
-        L.marker([10.78032, 106.70394], {icon: icon}).addTo(featureGroup);
-        var icon = L.divIcon({html: "<div style=\'position: relative;\'><img src='https://media-cdn.tripadvisor.com/media/photo-t/17/d3/a7/b9/trung-tam-thuong-m-i.jpg' alt='TTTM Gigamall' style='width:50px;height:50px;border: solid white 4px;'><p style='padding:5px 2px;background:white;color:white'>1000</p><div style='position: absolute;bottom: -22px;color: white;background: #00000057;text-wrap: nowrap;padding: 2px 5px;left: 50%;transform: translateX(-50%);'>TTTM Gigamall</div></div>"});
-        L.marker([10.81821, 106.68741], {icon: icon}).addTo(featureGroup);
-        var icon = L.divIcon({html: "<div style=\'position: relative;\'><img src='https://media-cdn.tripadvisor.com/media/photo-t/13/98/d1/b3/the-line-tran-van-thao.jpg' alt='Galerie Quynh' style='width:50px;height:50px;border: solid white 4px;'><p style='padding:5px 2px;background:white;color:white'>1000</p><div style='position: absolute;bottom: -22px;color: white;background: #00000057;text-wrap: nowrap;padding: 2px 5px;left: 50%;transform: translateX(-50%);'>Galerie Quynh</div></div>"});
-        L.marker([10.78839, 106.69754], {icon: icon}).addTo(featureGroup);
-        var icon = L.divIcon({html: "<div style=\'position: relative;\'><img src='https://media-cdn.tripadvisor.com/media/photo-t/01/8c/22/ae/central-bridge.jpg' alt='Lac Canh Dai Nam Van Hien' style='width:50px;height:50px;border: solid white 4px;'><p style='padding:5px 2px;background:white;color:white'>1000</p><div style='position: absolute;bottom: -22px;color: white;background: #00000057;text-wrap: nowrap;padding: 2px 5px;left: 50%;transform: translateX(-50%);'>Lac Canh Dai Nam Van Hien</div></div>"});
-        L.marker([11.042333, 106.6305], {icon: icon}).addTo(featureGroup);
-        var icon = L.divIcon({html: "<div style=\'position: relative;\'><img src='https://media-cdn.tripadvisor.com/media/photo-t/12/a7/13/f7/caption.jpg' alt='Parkson CT Plaza' style='width:50px;height:50px;border: solid white 4px;'><p style='padding:5px 2px;background:white;color:white'>1000</p><div style='position: absolute;bottom: -22px;color: white;background: #00000057;text-wrap: nowrap;padding: 2px 5px;left: 50%;transform: translateX(-50%);'>Parkson CT Plaza</div></div>"});
-        L.marker([10.813314, 106.66547], {icon: icon}).addTo(featureGroup);
-        var icon = L.divIcon({html: "<div style=\'position: relative;\'><img src='https://media-cdn.tripadvisor.com/media/photo-t/1a/18/61/4b/getlstd-property-photo.jpg' alt='Techcombank Ho Chi Minh City International Marathon' style='width:50px;height:50px;border: solid white 4px;'><p style='padding:5px 2px;background:white;color:white'>1000</p><div style='position: absolute;bottom: -22px;color: white;background: #00000057;text-wrap: nowrap;padding: 2px 5px;left: 50%;transform: translateX(-50%);'>Techcombank Ho Chi Minh City International Marathon</div></div>"});
-        L.marker([10.787243, 106.70497], {icon: icon}).addTo(featureGroup);
-        var icon = L.divIcon({html: "<div style=\'position: relative;\'><img src='https://media-cdn.tripadvisor.com/media/photo-t/07/94/c6/ff/statue-of-avalokiteshvara.jpg' alt='Statue of Avalokiteshvara' style='width:50px;height:50px;border: solid white 4px;'><p style='padding:5px 2px;background:white;color:white'>1000</p><div style='position: absolute;bottom: -22px;color: white;background: #00000057;text-wrap: nowrap;padding: 2px 5px;left: 50%;transform: translateX(-50%);'>Statue of Avalokiteshvara</div></div>"});
-        L.marker([10.78662, 106.64005], {icon: icon}).addTo(featureGroup);
-        var icon = L.divIcon({html: "<div style=\'position: relative;\'><img src='https://media-cdn.tripadvisor.com/media/photo-t/10/c2/a9/6d/c-ng-chinh-chua-wat-chantarang.jpg' alt='Wat Chantarangsay' style='width:50px;height:50px;border: solid white 4px;'><p style='padding:5px 2px;background:white;color:white'>1000</p><div style='position: absolute;bottom: -22px;color: white;background: #00000057;text-wrap: nowrap;padding: 2px 5px;left: 50%;transform: translateX(-50%);'>Wat Chantarangsay</div></div>"});
-        L.marker([10.78575, 106.68262], {icon: icon}).addTo(featureGroup);
-        var icon = L.divIcon({html: "<div style=\'position: relative;\'><img src='https://media-cdn.tripadvisor.com/media/photo-t/18/d1/66/35/getlstd-property-photo.jpg' alt='Landmark 81 SkyView' style='width:50px;height:50px;border: solid white 4px;'><p style='padding:5px 2px;background:white;color:white'>1000</p><div style='position: absolute;bottom: -22px;color: white;background: #00000057;text-wrap: nowrap;padding: 2px 5px;left: 50%;transform: translateX(-50%);'>Landmark 81 SkyView</div></div>"});
-        L.marker([10.794957, 106.7214], {icon: icon}).addTo(featureGroup);
-        var icon = L.divIcon({html: "<div style=\'position: relative;\'><img src='https://media-cdn.tripadvisor.com/media/photo-t/14/21/9c/87/toan-c-nh-khu-b-o-tang.jpg' alt='Southern Women's Museum' style='width:50px;height:50px;border: solid white 4px;'><p style='padding:5px 2px;background:white;color:white'>1000</p><div style='position: absolute;bottom: -22px;color: white;background: #00000057;text-wrap: nowrap;padding: 2px 5px;left: 50%;transform: translateX(-50%);'>Southern Women's Museum</div></div>"});
-        L.marker([10.784115, 106.68758], {icon: icon}).addTo(featureGroup);
-        var icon = L.divIcon({html: "<div style=\'position: relative;\'><img src='https://media-cdn.tripadvisor.com/media/photo-t/0d/22/6d/34/the-view-at-turtle-lake.jpg' alt='Turtle Lake' style='width:50px;height:50px;border: solid white 4px;'><p style='padding:5px 2px;background:white;color:white'>1000</p><div style='position: absolute;bottom: -22px;color: white;background: #00000057;text-wrap: nowrap;padding: 2px 5px;left: 50%;transform: translateX(-50%);'>Turtle Lake</div></div>"});
-        L.marker([10.79212, 106.6867], {icon: icon}).addTo(featureGroup);
-        var icon = L.divIcon({html: "<div style=\'position: relative;\'><img src='https://media-cdn.tripadvisor.com/media/photo-t/0f/76/b3/06/outside-of-dia-projects.jpg' alt='Dia Projects' style='width:50px;height:50px;border: solid white 4px;'><p style='padding:5px 2px;background:white;color:white'>1000</p><div style='position: absolute;bottom: -22px;color: white;background: #00000057;text-wrap: nowrap;padding: 2px 5px;left: 50%;transform: translateX(-50%);'>Dia Projects</div></div>"});
-        L.marker([10.81796, 106.72172], {icon: icon}).addTo(featureGroup);
-        var icon = L.divIcon({html: "<div style=\'position: relative;\'><img src='https://media-cdn.tripadvisor.com/media/daodao/photo-t/11/8a/d6/a2/caption.jpg' alt='Ho Chi Minh City's Book Street' style='width:50px;height:50px;border: solid white 4px;'><p style='padding:5px 2px;background:white;color:white'>1000</p><div style='position: absolute;bottom: -22px;color: white;background: #00000057;text-wrap: nowrap;padding: 2px 5px;left: 50%;transform: translateX(-50%);'>Ho Chi Minh City's Book Street</div></div>"});
-        L.marker([10.781, 106.70001], {icon: icon}).addTo(featureGroup);
-        var icon = L.divIcon({html: "<div style=\'position: relative;\'><img src='https://media-cdn.tripadvisor.com/media/photo-t/10/59/67/50/photo3jpg.jpg' alt='Tan Dinh Church' style='width:50px;height:50px;border: solid white 4px;'><p style='padding:5px 2px;background:white;color:white'>1000</p><div style='position: absolute;bottom: -22px;color: white;background: #00000057;text-wrap: nowrap;padding: 2px 5px;left: 50%;transform: translateX(-50%);'>Tan Dinh Church</div></div>"});
-        L.marker([10.788428, 106.69072], {icon: icon}).addTo(featureGroup);
-        var icon = L.divIcon({html: "<div style=\'position: relative;\'><img src='https://media-cdn.tripadvisor.com/media/photo-t/1a/83/e4/1c/sasco-travel-kiosk-inside.jpg' alt='SASCO Travel' style='width:50px;height:50px;border: solid white 4px;'><p style='padding:5px 2px;background:white;color:white'>1000</p><div style='position: absolute;bottom: -22px;color: white;background: #00000057;text-wrap: nowrap;padding: 2px 5px;left: 50%;transform: translateX(-50%);'>SASCO Travel</div></div>"});
-        L.marker([10.812804, 106.6622], {icon: icon}).addTo(featureGroup);
-        var icon = L.divIcon({html: "<div style=\'position: relative;\'><img src='https://media-cdn.tripadvisor.com/media/photo-t/15/a8/ba/3a/one-of-the-most-peaceful.jpg' alt='Khu Du Lich Ben Xua' style='width:50px;height:50px;border: solid white 4px;'><p style='padding:5px 2px;background:white;color:white'>1000</p><div style='position: absolute;bottom: -22px;color: white;background: #00000057;text-wrap: nowrap;padding: 2px 5px;left: 50%;transform: translateX(-50%);'>Khu Du Lich Ben Xua</div></div>"});
-        L.marker([10.853281, 106.679016], {icon: icon}).addTo(featureGroup);
-        var icon = L.divIcon({html: "<div style=\'position: relative;\'><img src='https://media-cdn.tripadvisor.com/media/photo-t/08/8c/6a/d8/front-view.jpg' alt='Duc Minh Art Gallery - Private Museum' style='width:50px;height:50px;border: solid white 4px;'><p style='padding:5px 2px;background:white;color:white'>1000</p><div style='position: absolute;bottom: -22px;color: white;background: #00000057;text-wrap: nowrap;padding: 2px 5px;left: 50%;transform: translateX(-50%);'>Duc Minh Art Gallery - Private Museum</div></div>"});
-        L.marker([10.78191, 106.69011], {icon: icon}).addTo(featureGroup);
-        var icon = L.divIcon({html: "<div style=\'position: relative;\'><img src='https://media-cdn.tripadvisor.com/media/photo-t/12/5c/2c/ad/vue.jpg' alt='Former U.S. Embassy' style='width:50px;height:50px;border: solid white 4px;'><p style='padding:5px 2px;background:white;color:white'>1000</p><div style='position: absolute;bottom: -22px;color: white;background: #00000057;text-wrap: nowrap;padding: 2px 5px;left: 50%;transform: translateX(-50%);'>Former U.S. Embassy</div></div>"});
-        L.marker([10.7833, 106.7004], {icon: icon}).addTo(featureGroup);
-        var icon = L.divIcon({html: "<div style=\'position: relative;\'><img src='https://media-cdn.tripadvisor.com/media/photo-t/0d/d6/ed/45/m-t-ti-n-c-a-trung-tam.jpg' alt='Tan Binh Exhibition & Convention Center - TBECC' style='width:50px;height:50px;border: solid white 4px;'><p style='padding:5px 2px;background:white;color:white'>1000</p><div style='position: absolute;bottom: -22px;color: white;background: #00000057;text-wrap: nowrap;padding: 2px 5px;left: 50%;transform: translateX(-50%);'>Tan Binh Exhibition & Convention Center - TBECC</div></div>"});
-        L.marker([10.795646, 106.65472], {icon: icon}).addTo(featureGroup);
-        var icon = L.divIcon({html: "<div style=\'position: relative;\'><img src='https://media-cdn.tripadvisor.com/media/photo-t/07/bd/72/2a/urban-gallery.jpg' alt='Urban Gallery' style='width:50px;height:50px;border: solid white 4px;'><p style='padding:5px 2px;background:white;color:white'>1000</p><div style='position: absolute;bottom: -22px;color: white;background: #00000057;text-wrap: nowrap;padding: 2px 5px;left: 50%;transform: translateX(-50%);'>Urban Gallery</div></div>"});
-        L.marker([10.784034, 106.69893], {icon: icon}).addTo(featureGroup);
-        var icon = L.divIcon({html: "<div style=\'position: relative;\'><img src='https://media-cdn.tripadvisor.com/media/photo-t/05/2a/9a/f7/entrance.jpg' alt='Bat Trang Moment - pottery workshop' style='width:50px;height:50px;border: solid white 4px;'><p style='padding:5px 2px;background:white;color:white'>1000</p><div style='position: absolute;bottom: -22px;color: white;background: #00000057;text-wrap: nowrap;padding: 2px 5px;left: 50%;transform: translateX(-50%);'>Bat Trang Moment - pottery workshop</div></div>"});
-        L.marker([10.79396, 106.68944], {icon: icon}).addTo(featureGroup);
-        var icon = L.divIcon({html: "<div style=\'position: relative;\'><img src='https://media-cdn.tripadvisor.com/media/photo-t/09/7c/74/d0/4-30.jpg' alt='Cong Vien 30-4' style='width:50px;height:50px;border: solid white 4px;'><p style='padding:5px 2px;background:white;color:white'>1000</p><div style='position: absolute;bottom: -22px;color: white;background: #00000057;text-wrap: nowrap;padding: 2px 5px;left: 50%;transform: translateX(-50%);'>Cong Vien 30-4</div></div>"});
-        L.marker([10.78715, 106.7048], {icon: icon}).addTo(featureGroup);
-        var icon = L.divIcon({html: "<div style=\'position: relative;\'><img src='https://media-cdn.tripadvisor.com/media/photo-t/11/4c/59/75/photo1jpg.jpg' alt='Van Thanh Swimming Pool' style='width:50px;height:50px;border: solid white 4px;'><p style='padding:5px 2px;background:white;color:white'>1000</p><div style='position: absolute;bottom: -22px;color: white;background: #00000057;text-wrap: nowrap;padding: 2px 5px;left: 50%;transform: translateX(-50%);'>Van Thanh Swimming Pool</div></div>"});
-        L.marker([10.80152, 106.70989], {icon: icon}).addTo(featureGroup);
-        var icon = L.divIcon({html: "<div style=\'position: relative;\'><img src='https://media-cdn.tripadvisor.com/media/photo-t/12/af/46/a9/thich-quang-duc-monument.jpg' alt='The Venerable Thich Quang Duc Monument' style='width:50px;height:50px;border: solid white 4px;'><p style='padding:5px 2px;background:white;color:white'>1000</p><div style='position: absolute;bottom: -22px;color: white;background: #00000057;text-wrap: nowrap;padding: 2px 5px;left: 50%;transform: translateX(-50%);'>The Venerable Thich Quang Duc Monument</div></div>"});
-        L.marker([10.79046, 106.70136], {icon: icon}).addTo(featureGroup);
-        var icon = L.divIcon({html: "<div style=\'position: relative;\'><img src='https://media-cdn.tripadvisor.com/media/photo-t/12/22/df/f8/getlstd-property-photo.jpg' alt='Sleep Zone' style='width:50px;height:50px;border: solid white 4px;'><p style='padding:5px 2px;background:white;color:white'>1000</p><div style='position: absolute;bottom: -22px;color: white;background: #00000057;text-wrap: nowrap;padding: 2px 5px;left: 50%;transform: translateX(-50%);'>Sleep Zone</div></div>"});
-        L.marker([10.817746, 106.66614], {icon: icon}).addTo(featureGroup);
-        var icon = L.divIcon({html: "<div style=\'position: relative;\'><img src='https://media-cdn.tripadvisor.com/media/photo-t/01/7e/0d/c5/can-tho-floating-market.jpg' alt='Bach Dang' style='width:50px;height:50px;border: solid white 4px;'><p style='padding:5px 2px;background:white;color:white'>1000</p><div style='position: absolute;bottom: -22px;color: white;background: #00000057;text-wrap: nowrap;padding: 2px 5px;left: 50%;transform: translateX(-50%);'>Bach Dang</div></div>"});
-        L.marker([10.789567, 106.67774], {icon: icon}).addTo(featureGroup);
-        var icon = L.divIcon({html: "<div style=\'position: relative;\'><img src='https://media-cdn.tripadvisor.com/media/photo-t/0e/15/c6/7f/h-boi.jpg' alt='Can Gio Mangrove Biosphere Reserve' style='width:50px;height:50px;border: solid white 4px;'><p style='padding:5px 2px;background:white;color:white'>1000</p><div style='position: absolute;bottom: -22px;color: white;background: #00000057;text-wrap: nowrap;padding: 2px 5px;left: 50%;transform: translateX(-50%);'>Can Gio Mangrove Biosphere Reserve</div></div>"});
-        L.marker([10.78625, 106.706], {icon: icon}).addTo(featureGroup);
-        var icon = L.divIcon({html: "<div style=\'position: relative;\'><img src='https://media-cdn.tripadvisor.com/media/photo-t/16/73/5a/2c/craig-thomas-gallery.jpg' alt='Craig Thomas Gallery' style='width:50px;height:50px;border: solid white 4px;'><p style='padding:5px 2px;background:white;color:white'>1000</p><div style='position: absolute;bottom: -22px;color: white;background: #00000057;text-wrap: nowrap;padding: 2px 5px;left: 50%;transform: translateX(-50%);'>Craig Thomas Gallery</div></div>"});
-        L.marker([10.7932, 106.69032], {icon: icon}).addTo(featureGroup);
-        var icon = L.divIcon({html: "<div style=\'position: relative;\'><img src='https://media-cdn.tripadvisor.com/media/photo-t/14/bd/77/65/ba-chieu-market.jpg' alt='Ba Chieu Market' style='width:50px;height:50px;border: solid white 4px;'><p style='padding:5px 2px;background:white;color:white'>1000</p><div style='position: absolute;bottom: -22px;color: white;background: #00000057;text-wrap: nowrap;padding: 2px 5px;left: 50%;transform: translateX(-50%);'>Ba Chieu Market</div></div>"});
-        L.marker([10.801558, 106.69881], {icon: icon}).addTo(featureGroup);
-        var icon = L.divIcon({html: "<div style=\'position: relative;\'><img src='https://media-cdn.tripadvisor.com/media/photo-t/0f/7e/85/57/en-soiree.jpg' alt='Diamond Plaza' style='width:50px;height:50px;border: solid white 4px;'><p style='padding:5px 2px;background:white;color:white'>1000</p><div style='position: absolute;bottom: -22px;color: white;background: #00000057;text-wrap: nowrap;padding: 2px 5px;left: 50%;transform: translateX(-50%);'>Diamond Plaza</div></div>"});
-        L.marker([10.780994, 106.69879], {icon: icon}).addTo(featureGroup);
-        var icon = L.divIcon({html: "<div style=\'position: relative;\'><img src='https://media-cdn.tripadvisor.com/media/photo-t/17/ad/bf/e6/20190527-121822-largejpg.jpg' alt='Binh Quoi Village' style='width:50px;height:50px;border: solid white 4px;'><p style='padding:5px 2px;background:white;color:white'>1000</p><div style='position: absolute;bottom: -22px;color: white;background: #00000057;text-wrap: nowrap;padding: 2px 5px;left: 50%;transform: translateX(-50%);'>Binh Quoi Village</div></div>"});
-        L.marker([10.82908, 106.73741], {icon: icon}).addTo(featureGroup);
-        var icon = L.divIcon({html: "<div style=\'position: relative;\'><img src='https://media-cdn.tripadvisor.com/media/photo-t/0d/76/43/62/m-t-trong-2-b-o-thap.jpg' alt='Phap Viện Minh Dang Quang' style='width:50px;height:50px;border: solid white 4px;'><p style='padding:5px 2px;background:white;color:white'>1000</p><div style='position: absolute;bottom: -22px;color: white;background: #00000057;text-wrap: nowrap;padding: 2px 5px;left: 50%;transform: translateX(-50%);'>Phap Viện Minh Dang Quang</div></div>"});
-        L.marker([10.82644, 106.76074], {icon: icon}).addTo(featureGroup);
-        var icon = L.divIcon({html: "<div style=\'position: relative;\'><img src='https://media-cdn.tripadvisor.com/media/photo-t/0d/f9/a3/ea/ho-chi-minh-movement.jpg' alt='Ho Chi Minh Campaign Museum' style='width:50px;height:50px;border: solid white 4px;'><p style='padding:5px 2px;background:white;color:white'>1000</p><div style='position: absolute;bottom: -22px;color: white;background: #00000057;text-wrap: nowrap;padding: 2px 5px;left: 50%;transform: translateX(-50%);'>Ho Chi Minh Campaign Museum</div></div>"});
-        L.marker([10.786844, 106.70437], {icon: icon}).addTo(featureGroup);
-        var icon = L.divIcon({html: "<div style=\'position: relative;\'><img src='https://media-cdn.tripadvisor.com/media/photo-t/0d/bc/ee/37/tu-ng-dai-ngu-i-anh-hung.jpg' alt='Le Van Tam Park' style='width:50px;height:50px;border: solid white 4px;'><p style='padding:5px 2px;background:white;color:white'>1000</p><div style='position: absolute;bottom: -22px;color: white;background: #00000057;text-wrap: nowrap;padding: 2px 5px;left: 50%;transform: translateX(-50%);'>Le Van Tam Park</div></div>"});
-        L.marker([10.78422, 106.64216], {icon: icon}).addTo(featureGroup);
-        var icon = L.divIcon({html: "<div style=\'position: relative;\'><img src='https://media-cdn.tripadvisor.com/media/photo-t/08/0e/23/b5/caption.jpg' alt='Him Lam Ba Son Golf Driving Range' style='width:50px;height:50px;border: solid white 4px;'><p style='padding:5px 2px;background:white;color:white'>1000</p><div style='position: absolute;bottom: -22px;color: white;background: #00000057;text-wrap: nowrap;padding: 2px 5px;left: 50%;transform: translateX(-50%);'>Him Lam Ba Son Golf Driving Range</div></div>"});
-        L.marker([10.78734, 106.715965], {icon: icon}).addTo(featureGroup);
-        var icon = L.divIcon({html: "<div style=\'position: relative;\'><img src='https://media-cdn.tripadvisor.com/media/photo-t/13/7d/ce/01/yiu-chi-leung-an-era.jpg' alt='Vin Gallery' style='width:50px;height:50px;border: solid white 4px;'><p style='padding:5px 2px;background:white;color:white'>1000</p><div style='position: absolute;bottom: -22px;color: white;background: #00000057;text-wrap: nowrap;padding: 2px 5px;left: 50%;transform: translateX(-50%);'>Vin Gallery</div></div>"});
-        L.marker([10.804544, 106.73204], {icon: icon}).addTo(featureGroup);
-        var icon = L.divIcon({html: "<div style=\'position: relative;\'><img src='https://media-cdn.tripadvisor.com/media/photo-t/12/ae/e2/1f/post-office-interior.jpg' alt='Central Post Office' style='width:50px;height:50px;border: solid white 4px;'><p style='padding:5px 2px;background:white;color:white'>1000</p><div style='position: absolute;bottom: -22px;color: white;background: #00000057;text-wrap: nowrap;padding: 2px 5px;left: 50%;transform: translateX(-50%);'>Central Post Office</div></div>"});
-        L.marker([10.780134, 106.69787], {icon: icon}).addTo(featureGroup);
-        var icon = L.divIcon({html: "<div style=\'position: relative;\'><img src='https://media-cdn.tripadvisor.com/media/photo-t/15/20/22/c9/caption.jpg' alt='Tran Hung Dao Statue' style='width:50px;height:50px;border: solid white 4px;'><p style='padding:5px 2px;background:white;color:white'>1000</p><div style='position: absolute;bottom: -22px;color: white;background: #00000057;text-wrap: nowrap;padding: 2px 5px;left: 50%;transform: translateX(-50%);'>Tran Hung Dao Statue</div></div>"});
-        L.marker([10.78522, 106.70343], {icon: icon}).addTo(featureGroup);
-        var icon = L.divIcon({html: "<div style=\'position: relative;\'><img src='https://media-cdn.tripadvisor.com/media/photo-t/0d/bf/e2/f1/vh-le-th-rieng-q-10-tphcm.jpg' alt='Le Thi Rieng Culture Park' style='width:50px;height:50px;border: solid white 4px;'><p style='padding:5px 2px;background:white;color:white'>1000</p><div style='position: absolute;bottom: -22px;color: white;background: #00000057;text-wrap: nowrap;padding: 2px 5px;left: 50%;transform: translateX(-50%);'>Le Thi Rieng Culture Park</div></div>"});
-        L.marker([10.789305, 106.6368], {icon: icon}).addTo(featureGroup);
-        var icon = L.divIcon({html: "<div style=\'position: relative;\'><img src='https://media-cdn.tripadvisor.com/media/photo-t/0f/14/24/d9/petit-muret-de-presentation.jpg' alt='Zoo and Botanical Gardens' style='width:50px;height:50px;border: solid white 4px;'><p style='padding:5px 2px;background:white;color:white'>1000</p><div style='position: absolute;bottom: -22px;color: white;background: #00000057;text-wrap: nowrap;padding: 2px 5px;left: 50%;transform: translateX(-50%);'>Zoo and Botanical Gardens</div></div>"});
-        L.marker([10.791238, 106.70606], {icon: icon}).addTo(featureGroup);
-        var icon = L.divIcon({html: "<div style=\'position: relative;\'><img src='https://media-cdn.tripadvisor.com/media/photo-t/18/af/d7/80/women-care-more-which.jpg' alt='Saigon Kiss Tours' style='width:50px;height:50px;border: solid white 4px;'><p style='padding:5px 2px;background:white;color:white'>1000</p><div style='position: absolute;bottom: -22px;color: white;background: #00000057;text-wrap: nowrap;padding: 2px 5px;left: 50%;transform: translateX(-50%);'>Saigon Kiss Tours</div></div>"});
-        L.marker([10.80153, 106.65179], {icon: icon}).addTo(featureGroup);
-        var icon = L.divIcon({html: "<div style=\'position: relative;\'><img src='https://media-cdn.tripadvisor.com/media/photo-t/0e/e0/9a/52/2017.jpg' alt='Rubik Zoo' style='width:50px;height:50px;border: solid white 4px;'><p style='padding:5px 2px;background:white;color:white'>1000</p><div style='position: absolute;bottom: -22px;color: white;background: #00000057;text-wrap: nowrap;padding: 2px 5px;left: 50%;transform: translateX(-50%);'>Rubik Zoo</div></div>"});
-        L.marker([10.789602, 106.70478], {icon: icon}).addTo(featureGroup);
-        var icon = L.divIcon({html: "<div style=\'position: relative;\'><img src='https://media-cdn.tripadvisor.com/media/photo-t/07/d1/e4/72/getlstd-property-photo.jpg' alt='Pandora City Shopping Mall' style='width:50px;height:50px;border: solid white 4px;'><p style='padding:5px 2px;background:white;color:white'>1000</p><div style='position: absolute;bottom: -22px;color: white;background: #00000057;text-wrap: nowrap;padding: 2px 5px;left: 50%;transform: translateX(-50%);'>Pandora City Shopping Mall</div></div>"});
-        L.marker([10.806827, 106.63419], {icon: icon}).addTo(featureGroup);
-        var icon = L.divIcon({html: "<div style=\'position: relative;\'><img src='https://media-cdn.tripadvisor.com/media/photo-t/0e/ee/cd/70/external-building.jpg' alt='Aeon Mall Tan Phu Celadon Shopping Center' style='width:50px;height:50px;border: solid white 4px;'><p style='padding:5px 2px;background:white;color:white'>1000</p><div style='position: absolute;bottom: -22px;color: white;background: #00000057;text-wrap: nowrap;padding: 2px 5px;left: 50%;transform: translateX(-50%);'>Aeon Mall Tan Phu Celadon Shopping Center</div></div>"});
-        L.marker([10.801777, 106.61825], {icon: icon}).addTo(featureGroup);
-        var icon = L.divIcon({html: "<div style=\'position: relative;\'><img src='https://media-cdn.tripadvisor.com/media/photo-t/09/61/2c/07/emperor-jade-pagoda-chua.jpg' alt='Emperor Jade Pagoda' style='width:50px;height:50px;border: solid white 4px;'><p style='padding:5px 2px;background:white;color:white'>1000</p><div style='position: absolute;bottom: -22px;color: white;background: #00000057;text-wrap: nowrap;padding: 2px 5px;left: 50%;transform: translateX(-50%);'>Emperor Jade Pagoda</div></div>"});
-        L.marker([10.79205, 106.69812], {icon: icon}).addTo(featureGroup);
-        var icon = L.divIcon({html: "<div style=\'position: relative;\'><img src='https://media-cdn.tripadvisor.com/media/photo-t/11/7e/04/78/chua-vinh-nghiem-pagoda.jpg' alt='Chua Vinh Nghiem' style='width:50px;height:50px;border: solid white 4px;'><p style='padding:5px 2px;background:white;color:white'>1000</p><div style='position: absolute;bottom: -22px;color: white;background: #00000057;text-wrap: nowrap;padding: 2px 5px;left: 50%;transform: translateX(-50%);'>Chua Vinh Nghiem</div></div>"});
-        L.marker([10.79153, 106.682014], {icon: icon}).addTo(featureGroup);
-        var icon = L.divIcon({html: "<div style=\'position: relative;\'><img src='https://media-cdn.tripadvisor.com/media/photo-t/14/03/31/82/tm-vincom-th-d-c-tphcm.jpg' alt='Vincom Thu Duc' style='width:50px;height:50px;border: solid white 4px;'><p style='padding:5px 2px;background:white;color:white'>1000</p><div style='position: absolute;bottom: -22px;color: white;background: #00000057;text-wrap: nowrap;padding: 2px 5px;left: 50%;transform: translateX(-50%);'>Vincom Thu Duc</div></div>"});
-        L.marker([10.850316, 106.76543], {icon: icon}).addTo(featureGroup);
-        var icon = L.divIcon({html: "<div style=\'position: relative;\'><img src='https://media-cdn.tripadvisor.com/media/photo-t/04/91/da/e7/vinaracing.jpg' alt='VinaRacing' style='width:50px;height:50px;border: solid white 4px;'><p style='padding:5px 2px;background:white;color:white'>1000</p><div style='position: absolute;bottom: -22px;color: white;background: #00000057;text-wrap: nowrap;padding: 2px 5px;left: 50%;transform: translateX(-50%);'>VinaRacing</div></div>"});
-        L.marker([10.8538, 106.78313], {icon: icon}).addTo(featureGroup);
-        var icon = L.divIcon({html: "<div style=\'position: relative;\'><img src='https://media-cdn.tripadvisor.com/media/photo-t/09/ee/00/49/photo2jpg.jpg' alt='Tan Son Nhut Air Force Museum' style='width:50px;height:50px;border: solid white 4px;'><p style='padding:5px 2px;background:white;color:white'>1000</p><div style='position: absolute;bottom: -22px;color: white;background: #00000057;text-wrap: nowrap;padding: 2px 5px;left: 50%;transform: translateX(-50%);'>Tan Son Nhut Air Force Museum</div></div>"});
-        L.marker([10.805047, 106.66098], {icon: icon}).addTo(featureGroup);
-        var icon = L.divIcon({html: "<div style=\'position: relative;\'><img src='https://media-cdn.tripadvisor.com/media/photo-t/14/ae/fc/1a/getlstd-property-photo.jpg' alt='Si Antiques' style='width:50px;height:50px;border: solid white 4px;'><p style='padding:5px 2px;background:white;color:white'>1000</p><div style='position: absolute;bottom: -22px;color: white;background: #00000057;text-wrap: nowrap;padding: 2px 5px;left: 50%;transform: translateX(-50%);'>Si Antiques</div></div>"});
-        L.marker([10.803997, 106.73479], {icon: icon}).addTo(featureGroup);
-        var icon = L.divIcon({html: "<div style=\'position: relative;\'><img src='https://media-cdn.tripadvisor.com/media/photo-t/0b/76/ba/e7/getlstd-property-photo.jpg' alt='Savon De Saigon Store' style='width:50px;height:50px;border: solid white 4px;'><p style='padding:5px 2px;background:white;color:white'>1000</p><div style='position: absolute;bottom: -22px;color: white;background: #00000057;text-wrap: nowrap;padding: 2px 5px;left: 50%;transform: translateX(-50%);'>Savon De Saigon Store</div></div>"});
-        L.marker([10.793164, 106.71976], {icon: icon}).addTo(featureGroup);
-        var icon = L.divIcon({html: "<div style=\'position: relative;\'><img src='https://media-cdn.tripadvisor.com/media/photo-t/1a/5f/d1/2d/photo1jpg.jpg' alt='Dragonfly Theatre' style='width:50px;height:50px;border: solid white 4px;'><p style='padding:5px 2px;background:white;color:white'>1000</p><div style='position: absolute;bottom: -22px;color: white;background: #00000057;text-wrap: nowrap;padding: 2px 5px;left: 50%;transform: translateX(-50%);'>Dragonfly Theatre</div></div>"});
-        L.marker([10.80372, 106.73485], {icon: icon}).addTo(featureGroup);
-        var icon = L.divIcon({html: "<div style=\'position: relative;\'><img src='https://media-cdn.tripadvisor.com/media/photo-t/1b/a1/f0/d5/ky-dong.jpg' alt='Pastoral Center of Redemptorists' style='width:50px;height:50px;border: solid white 4px;'><p style='padding:5px 2px;background:white;color:white'>1000</p><div style='position: absolute;bottom: -22px;color: white;background: #00000057;text-wrap: nowrap;padding: 2px 5px;left: 50%;transform: translateX(-50%);'>Pastoral Center of Redemptorists</div></div>"});
-        L.marker([10.78092, 106.68124], {icon: icon}).addTo(featureGroup);
-        var icon = L.divIcon({html: "<div style=\'position: relative;\'><img src='' alt='Tran Hung Dao Holy Temple' style='width:50px;height:50px;border: solid white 4px;'><p style='padding:5px 2px;background:white;color:white'>1000</p><div style='position: absolute;bottom: -22px;color: white;background: #00000057;text-wrap: nowrap;padding: 2px 5px;left: 50%;transform: translateX(-50%);'>Tran Hung Dao Holy Temple</div></div>"});
-        L.marker([10.79078, 106.69477], {icon: icon}).addTo(featureGroup);
-        var icon = L.divIcon({html: "<div style=\'position: relative;\'><img src='https://media-cdn.tripadvisor.com/media/photo-t/17/b8/94/76/d-u-bang-c-i-nghe-nh.jpg' alt='Bang Coi' style='width:50px;height:50px;border: solid white 4px;'><p style='padding:5px 2px;background:white;color:white'>1000</p><div style='position: absolute;bottom: -22px;color: white;background: #00000057;text-wrap: nowrap;padding: 2px 5px;left: 50%;transform: translateX(-50%);'>Bang Coi</div></div>"});
-        L.marker([10.83596, 106.68049], {icon: icon}).addTo(featureGroup);
-        var icon = L.divIcon({html: "<div style=\'position: relative;\'><img src='https://media-cdn.tripadvisor.com/media/photo-t/14/f9/4b/0f/inventory-area-shopping.jpg' alt='Inventory' style='width:50px;height:50px;border: solid white 4px;'><p style='padding:5px 2px;background:white;color:white'>1000</p><div style='position: absolute;bottom: -22px;color: white;background: #00000057;text-wrap: nowrap;padding: 2px 5px;left: 50%;transform: translateX(-50%);'>Inventory</div></div>"});
-        L.marker([10.80384, 106.73498], {icon: icon}).addTo(featureGroup);
-    </script>
-    @push("scripts")
 
+    @push("scripts")
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js" defer></script>
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"
+                defer></script>
+
+        <script>
+            $(function () {
+                $('#select2-dropdown-city-from,#select2-dropdown-city-to').select2({
+                    ajax: {
+                        url: BASE_API + '/ai/trip-plan/cities?&ios3=USA',
+                        data: function (params) {
+                            var query = {
+                                search: params.term
+                            }
+                            // Query parameters will be ?search=[term]&type=public
+                            return query;
+                        },
+                        dataType: 'json',
+                        delay: 250,
+                        processResults: function (data) {
+                            // Trả về dữ liệu theo định dạng của Select2
+                            return {
+                                results: data.map(i => ({...i, text: `${i.city_ascii} - ${i.country}`}))
+                            };
+                        },
+                        cache: true
+                    },
+                    minimumInputLength: 1, // Số ký tự tối thiểu trước khi bắt đầu tìm kiếm
+                    placeholder: 'Select a city (Only cities in USA)',
+                    // templateResult: formatResult, // Tạo mẫu hiển thị kết quả
+                    // templateSelection: formatSelection
+                });
+
+                $('#select2-dropdown-city-from,#select2-dropdown-city-to').on('select2:select', async function (e) {
+                    const city = e.params.data;
+                    await onSelectCity(city)
+                });
+            })
+        </script>
+        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+                integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+                crossorigin=""></script>
+        <script>
+            function initMap(locations,cityFrom,cityTo){
+                const avgLat = (parseFloat(cityFrom.lat) + parseFloat(cityTo.lat)) / 2;
+                const avgLng = (parseFloat(cityFrom.lng) + parseFloat(cityTo.lng)) / 2;
+
+
+                var map = L.map('map').setView([avgLng, avgLat], 15);
+                L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    maxZoom: 19,
+                    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                }).addTo(map);
+
+
+                $.each(locations,function (index,item) {
+                    const position = [item.latitude,item.longitude];
+                    console.log(item)
+                    item.photo = JSON.parse(item.photo)
+                    var marker = L.marker(position).addTo(map);
+                    const imgUrl = item?.photo?.images?.large?.url;
+                    const name = item.name;
+                    const rating = item.num_reviews;
+
+                    const popup = `<div>
+                        <img src="${imgUrl}" class="w-100 rounded-3">
+                        <div class="fw-bold mt-2">${name}</div>
+                        <span class="badge bg-success fw-bold">Rating: ${rating}</span>
+                        <div>${item?.description}</div>
+                    </div>`
+
+                    marker.bindPopup(popup).openPopup();
+
+                    var circle = L.circle(position, {
+                        color: 'red',
+                        fillColor: '#f03',
+                        fillOpacity: 0.5,
+                        radius: rating
+                    }).addTo(map);
+
+                    circle.bindPopup(popup);
+                })
+
+                // const cityIcon = L.icon({
+                //     iconUrl: 'https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.vecteezy.com%2Fpng%2F14301029-red-pin-for-pointing-the-destination-on-the-map-3d-illustration&psig=AOvVaw1X_u7WHWF0_rl1rOoTxWwn&ust=1711025409433000&source=images&cd=vfe&opi=89978449&ved=0CBIQjRxqFwoTCPi407_wgoUDFQAAAAAdAAAAABBM',
+                //     iconSize: [38, 95],
+                //     iconAnchor: [22, 94],
+                //     popupAnchor: [-3, -76],
+                //     shadowUrl: 'my-icon-shadow.png',
+                //     shadowSize: [68, 95],
+                //     shadowAnchor: [22, 94]
+                // });
+
+                // marker cityFrom
+                var marker = L.marker([cityFrom.lat,cityFrom.lng]).addTo(map);
+                marker.bindPopup(`<b>Start point: ${cityFrom.name}</b>`).openPopup();
+
+                // marker cityTo
+                var marker = L.marker([cityTo.lat,cityTo.lng]).addTo(map);
+                marker.bindPopup(`<b>End point: ${cityTo.name}</b>`).openPopup();
+
+
+                // Determine bounding box
+                var bounds = locations.map(item=>([item.latitude,item.longitude])).reduce(function(bounds, loc) {
+                    return bounds.extend(loc);
+                }, L.latLngBounds(locations[0], locations[0]));
+
+                bounds.extend([cityTo.lng,cityTo.lat])
+                bounds.extend([cityTo.lng,cityTo.lat])
+
+                // Set map view to the bounding box and adjust zoom level
+                map.fitBounds(bounds);
+            }
+
+            function generateMap(){
+                const city_from = $("#select2-dropdown-city-from").val();
+                const city_to = $("#select2-dropdown-city-to").val();
+                const limit = $("#limit-locations").val();
+                $(".btn-create-map").attr("disabled",true);
+
+                axios.get(BASE_API + `/ai/trip-plan/wayspot?&from_city_id=${city_from}&to_city_id=${city_to}&limit=${limit}`)
+                    .then(r=>{
+                        let locations = r.data.locations;
+                        function compare(a, b) {
+                            if (a.numb_review < b.numb_review) {
+                                return -1;
+                            }
+                            if (a.numb_review > b.numb_review) {
+                                return 1;
+                            }
+                            return 0;
+                        }
+                        locations = locations.sort(compare);
+                        const cityFrom = r.data.city_from;
+                        const cityTo = r.data.city_to;
+                        initMap(locations,cityFrom,cityTo)
+                    }).finally(()=>{
+                    $(".btn-create-map").attr("disabled",false);
+                })
+            }
+        </script>
     @endpush
 @endsection
