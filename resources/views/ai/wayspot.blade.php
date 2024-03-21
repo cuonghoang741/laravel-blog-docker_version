@@ -298,25 +298,36 @@
 
                     const outbound = getOutboundValue();
 
-                    const pointsOutbound = [];
-                    [...points,...points2].forEach(function (point) {
-                        let lat1 = point[0][0];
-                        let lat2 = point[1][0];
+                    const pointsOutbound1 = [];
+                    const pointsOutbound2 = [];
 
-                        let lng1 = point[0][1];
-                        let lng2 = point[1][1];
+                    const drawOutbound = function (points,callback) {
+                        points.forEach(function (point) {
+                            let lat1 = point[0][0];
+                            let lat2 = point[1][0];
 
-                        const pos1 = [Math.min(lat1,lat2)-outbound, Math.min(lng1,lng2) - outbound];
-                        const pos2 = [Math.max(lat1,lat2)+outbound, Math.max(lng1,lng2) + outbound]
+                            let lng1 = point[0][1];
+                            let lng2 = point[1][1];
 
-                        pointsOutbound.push([pos1,pos2])
+                            const pos1 = [Math.min(lat1,lat2)-outbound, Math.min(lng1,lng2) - outbound];
+                            const pos2 = [Math.max(lat1,lat2)+outbound, Math.max(lng1,lng2) + outbound]
 
-                        const bounds = L.latLngBounds(pos1,pos2);
+                            const bounds = L.latLngBounds(pos1,pos2);
 
-                        L.rectangle(bounds, {color: "yellow", weight: 1}).addTo(map);
+                            L.rectangle(bounds, {color: "yellow", weight: 1}).addTo(map);
+
+                            callback([pos1,pos2])
+                        });
+                    }
+
+                    drawOutbound(points,function (point) {
+                        pointsOutbound1.push(point)
+                    });
+                    drawOutbound(points2,function (point) {
+                        pointsOutbound2.push(point)
                     });
 
-                    getLocationByPoints(pointsOutbound, function (locations) {
+                    const printMarker = function (locations) {
                         $.each(locations, function (index, item) {
                             const position = [item.latitude, item.longitude];
                             // item.photo = JSON.parse(item.photo)
@@ -325,16 +336,16 @@
                             const name = item.name;
                             const rating = item.num_reviews;
                             const subCategoryHtml = item?.sub_categories?.map(category => (`
-                        <span class="badge bg-secondary fw-bold me-1">${category?.name}</span>
-                    `)).join(" ");
+                                <span class="badge bg-secondary fw-bold me-1">${category?.name}</span>
+                            `)).join(" ");
 
                             const popup = `<div>
-                        <img src="${imgUrl}" class="w-100 rounded-3">
-                        <div class="fw-bold mt-2">${name} - ${item?.location_string}</div>
-                        <span class="badge bg-success fw-bold me-1">Rating: ${rating}</span>
-                        ${subCategoryHtml}
-                        <div>${item?.description}</div>
-                    </div>`
+                                <img src="${imgUrl}" class="w-100 rounded-3">
+                                <div class="fw-bold mt-2">${name} - ${item?.location_string}</div>
+                                <span class="badge bg-success fw-bold me-1">Rating: ${rating}</span>
+                                ${subCategoryHtml}
+                                <div>${item?.description}</div>
+                            </div>`
 
                             marker.bindPopup(popup).openPopup();
 
@@ -351,7 +362,17 @@
 
 
                         })
+                    }
 
+                    getLocationByPoints(pointsOutbound1, function (locs) {
+                        locations = locs;
+                        printMarker(locs);
+                    })
+
+                    getLocationByPoints(pointsOutbound2, function (locs) {
+                        locations = [...locations,...locs];
+                        printMarker(locs);
+                        console.log(locations)
                         var bounds = locations.map(item => ([item.latitude, item.longitude])).reduce(function (bounds, loc) {
                             return bounds.extend(loc);
                         }, L.latLngBounds(locations[0], locations[0]));
@@ -439,6 +460,7 @@
             }
 
             function getLocationByPoints(points,callback) {
+                locations = [];
                 const city_from = $("#select2-dropdown-city-from").val();
                 const city_to = $("#select2-dropdown-city-to").val();
                 const limit = $("#limit-locations").val();
@@ -465,9 +487,9 @@
                             return 0;
                         }
 
-                        locations = (r.data.locations).sort(compare);
-                        locations = locations.map(location => ({...location, photo: JSON.parse(location.photo)}));
-                        callback(locations)
+                        let locs = (r.data.locations).sort(compare);
+                        locs = locs.map(location => ({...location, photo: JSON.parse(location.photo)}));
+                        callback(locs)
                     }).finally(() => {
                     $(".btn-create-map").attr("disabled", false);
                 })
