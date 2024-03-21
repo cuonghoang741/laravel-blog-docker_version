@@ -122,6 +122,15 @@ async function fillId(city) {
   }
 }
 
-function getLocations(city) {
-  axios.get(BASE_API + `/ai/trip-plan/cities/${city.id}/locations`);
+// function getLocations(city) {
+//   axios.get(BASE_API + `/ai/trip-plan/cities/${city.id}/locations`);
+// }
+
+
+function getQueryStringFromObject(obj) {
+  let str = "";
+  Object.keys(obj).forEach(function (key) {
+    str += `&${key}=${obj[key]}`
+  })
+  return str
 }

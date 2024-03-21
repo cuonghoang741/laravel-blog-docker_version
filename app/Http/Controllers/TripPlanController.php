@@ -414,24 +414,24 @@ class TripPlanController extends Controller
                 $latLeft = $request->latLeft;
                 $latRight = $request->latRight;
                 $lngTop = $request->lngTop;
-                $lngBot = $request->lngBot;
+                $lngBottom = $request->lngBottom;
 
-                $locations =$this->getWayspot($latRight,$lngTop,$latLeft,$lngBot,$limit);
+                $locations =$this->getWayspot($latRight,$lngTop,$latLeft,$lngBottom,$limit);
             } else {
                 $cityFromLat = $cityFrom->lat;
                 $cityFromLngTop = (float)$cityFrom->lng + $radius;
-                $cityFromLngBot = (float)$cityFrom->lng - $radius;
+                $cityFromlngBottom = (float)$cityFrom->lng - $radius;
 
                 $cityToLat = $cityTo->lat;
                 $cityToLngTop= (float)$cityTo->lng + $radius;
-                $cityToLngBot= (float)$cityTo->lng - $radius;
+                $cityTolngBottom= (float)$cityTo->lng - $radius;
 
                 $latLeft = min([$cityToLat,$cityFromLat]);
                 $latRight = max([$cityToLat,$cityFromLat]);
                 $lngTop = max([$cityFromLngTop,$cityToLngTop]);
-                $lngBot = min([$cityToLngBot,$cityFromLngBot]);
+                $lngBottom = min([$cityTolngBottom,$cityFromlngBottom]);
 
-                $locations =$this->getWayspot($latRight,$lngTop,$latLeft,$lngBot,$limit);
+                $locations =$this->getWayspot($latRight,$lngTop,$latLeft,$lngBottom,$limit);
             }
 
             return response()->json([
@@ -445,24 +445,51 @@ class TripPlanController extends Controller
         }
     }
 
+    public function locationByPoints(Request $request){
+        $points = $request->points;
+        $query = Location::query()
+            ->with(["subCategories"]);
 
-    function getWayspot($latRight,$lngTop,$latLeft,$lngBot,$limit = 200)
-    {
-        return Location::query()
-            ->with(["subCategories"])
-            ->where(function ($whereBuilder) use ($latRight,$lngTop,$latLeft,$lngBot) {
+        $queryRaw = "SELECT *
+        FROM locations
+        WHERE latitude BETWEEN min_latitude1 AND max_latitude1
+          AND longitude BETWEEN min_longitude1 AND max_longitude1
+        UNION";
+        foreach ($points as $point){
+            $query = $query->where(function ($whereBuilder) use ($latRight,$lngTop,$latLeft,$lngBottom) {
                 $whereBuilder
                     ->where("latitude",">",$latLeft)
                     ->where("latitude","<",$latRight)
                     ->where("longitude","<",$lngTop)
-                    ->where("longitude",">",$lngBot)
+                    ->where("longitude",">",$lngBottom)
+                ;
+            });
+        }
+
+        dd($points);
+
+        return response()->json([
+            "points"=>$points,
+            "locations"=>$locations,
+        ]);
+    }
+
+    function getWayspot($latRight,$lngTop,$latLeft,$lngBottom,$limit = 200)
+    {
+        return Location::query()
+            ->with(["subCategories"])
+            ->where(function ($whereBuilder) use ($latRight,$lngTop,$latLeft,$lngBottom) {
+                $whereBuilder
+                    ->where("latitude",">",$latLeft)
+                    ->where("latitude","<",$latRight)
+                    ->where("longitude","<",$lngTop)
+                    ->where("longitude",">",$lngBottom)
                 ;
             })
             ->orderBy("num_reviews","desc")->limit($limit)->get();
     }
 
     public function generateMap(Request $request){
-//        $locations = $this->locationsBetween($request);
         $subCategories = LocationSubcategory::query()->orderBy("name")->get();
         return view("ai/wayspot",["subCategories"=>$subCategories]);
     }

@@ -69,12 +69,14 @@
         <div id="viewOnGGMap" style="display: none">
             <div class="d-flex justify-content-end fw-bold cursor-pointer mt-4">
                 <a href="https://www.google.com/maps/dir/33.93729,-106.85761/33.98729,-106.85861" target="_blank"
-                   class="btn bg-app btn-app text-white rounded-3 me-2 d-inline-flex align-items-center" >
+                   class="btn bg-app btn-app text-white rounded-3 me-2 d-inline-flex align-items-center">
                     View on Google Maps</a>
-                <button class="btn bg-app btn-app text-white rounded-3 me-2"  onclick="openWanderlog()">
-                    View on Wanderlog</button>
-                <button class="btn bg-app btn-app text-white rounded-3"  onclick="openLazyTrip()">
-                    View on Lazy Trips</button>
+                <button class="btn bg-app btn-app text-white rounded-3 me-2" onclick="openWanderlog()">
+                    View on Wanderlog
+                </button>
+                <button class="btn bg-app btn-app text-white rounded-3" onclick="openLazyTrip()">
+                    View on Lazy Trips
+                </button>
             </div>
         </div>
     </div>
@@ -96,6 +98,7 @@
             function openWanderlog() {
                 window.open(`https://wanderlog.com/drive/between/${matchWanderlogLocationId(cityFrom.name)}/${matchWanderlogLocationId(cityTo.name)}`);
             }
+
             function openLazyTrip() {
                 const name1 = (cityFrom.name).toLowerCase().replace(/ /g, '-');
                 const name2 = (cityTo.name).toLowerCase().replace(/ /g, '-');
@@ -162,45 +165,66 @@
 
                 $('#select2-dropdown-city-from,#select2-dropdown-city-to').on('select2:select', async function (e) {
                     const city = e.params.data;
-                    await onSelectCity(city)
+                    const target = e.currentTarget;
+                    if ($(target).attr("id") == "select2-dropdown-city-from") {
+                        cityFrom = city
+                    } else cityTo = city
                 });
             })
 
             var map;
 
             function mapFindMaxPosition(instructions, coordinates) {
-                let latRight = cityFrom.lat, latLeft = cityFrom.lat, lngTop = cityFrom.lng, lngBottom = cityFrom.lng;
-
+                let latRight = cityFrom.lat, latLeft = cityFrom.lat, lngTop = cityFrom.lng, lngBottom = cityFrom.lng,points = [];
                 $.each(instructions, function (i, instruction) {
                     const index = instruction.index;
                     const position = coordinates[index];
+                    points.push({...position,...instruction});
+
                     const lat = position.lat;
                     const lng = position.lng;
 
-                    // Update latLeft and latRight
-                    // if(latLeft > lat){
-                    //     console.log("change latLeft: ",instruction,position)
-                    // }
                     latLeft = Math.min(latLeft, lat);
-                    // if(latRight < lat){
-                    //     console.log("change latright: ",instruction,position)
-                    // }
                     latRight = Math.max(latRight, lat);
 
-                    // Update lngTop and lngBottom
-                    // if(lngTop < lat){
-                    //     console.log("change lngTop: ",instruction,position)
-                    // }
                     lngTop = Math.max(lngTop, lng);
-                    // if(lngBottom > lat){
-                    //     console.log("change lngBottom: ",instruction,position)
-                    // }
                     lngBottom = Math.min(lngBottom, lng);
                 })
-                return {latLeft, latRight, lngTop, lngBottom}
+                return {points,latLeft, latRight, lngTop, lngBottom}
             }
 
-            function initMap(locations, cityFrom, cityTo) {
+
+            function groupPointsDistance(locations,km=5){
+                const groups = [];
+
+                let distance_traveled = 0;
+                let firstPoint = null;
+                let nextPoint = null;
+
+                locations.forEach(function (point,index) {
+                    console.log(point)
+                    if (!firstPoint){
+                        firstPoint = point;
+                    }
+
+                    // increase distance
+                    distance_traveled += point.distance / 1000;
+
+                    if (distance_traveled > 5){
+                        nextPoint = point;
+                        const group = [[firstPoint.lat, firstPoint.lng], [nextPoint.lat, nextPoint.lng]];
+                        firstPoint = {...nextPoint};
+                        nextPoint = null;
+                        groups.push(group);
+
+                        distance_traveled = 0;
+                    }
+                })
+
+                return groups
+            }
+
+            function initMap(cityFrom, cityTo) {
                 map?.remove();
                 map = null;
                 $("#map").html("");
@@ -211,46 +235,12 @@
                 const avgLat = (parseFloat(cityFrom.lat) + parseFloat(cityTo.lat)) / 2;
                 const avgLng = (parseFloat(cityFrom.lng) + parseFloat(cityTo.lng)) / 2;
 
-
                 map = L.map('map').setView([avgLng, avgLat], 15);
                 L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
                     maxZoom: 19,
                     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
                 }).addTo(map);
 
-
-                $.each(locations, function (index, item) {
-                    const position = [item.latitude, item.longitude];
-                    // item.photo = JSON.parse(item.photo)
-                    var marker = L.marker(position).addTo(map);
-                    const imgUrl = item?.photo?.images?.large?.url;
-                    const name = item.name;
-                    const rating = item.num_reviews;
-                    const subCategoryHtml = item.sub_categories.map(category => (`
-                        <span class="badge bg-secondary fw-bold me-1">${category?.name}</span>
-                    `)).join(" ");
-
-                    const popup = `<div>
-                        <img src="${imgUrl}" class="w-100 rounded-3">
-                        <div class="fw-bold mt-2">${name} - ${item?.location_string}</div>
-                        <span class="badge bg-success fw-bold me-1">Rating: ${rating}</span>
-                        ${subCategoryHtml}
-                        <div>${item?.description}</div>
-                    </div>`
-
-                    marker.bindPopup(popup).openPopup();
-
-                    var circle = L.circle(position, {
-                        color: 'red',
-                        fillColor: '#f03',
-                        fillOpacity: 0.5,
-                        radius: rating * 3
-                    }).addTo(map);
-
-                    circle.bindPopup(popup);
-
-                    document.getElementById("map").scrollIntoView({behavior: "smooth"});
-                })
 
                 // const cityIcon = L.icon({
                 //     iconUrl: 'https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.vecteezy.com%2Fpng%2F14301029-red-pin-for-pointing-the-destination-on-the-map-3d-illustration&psig=AOvVaw1X_u7WHWF0_rl1rOoTxWwn&ust=1711025409433000&source=images&cd=vfe&opi=89978449&ved=0CBIQjRxqFwoTCPi407_wgoUDFQAAAAAdAAAAABBM',
@@ -287,7 +277,6 @@
                 ]).addTo(map);
 
                 routing.on('routeselected', function (e) {
-                    console.log(e)
                     const route = e.route
                     const route2 = e.alternatives[0];
                     const coordinates = route.coordinates;
@@ -295,48 +284,101 @@
                     const mapMaxPositon = mapFindMaxPosition(instructions, coordinates);
                     const mapMaxPositon2 = mapFindMaxPosition(route2.instructions, route2.coordinates);
 
-                    L.polygon([
-                        [mapMaxPositon.latLeft, mapMaxPositon.lngTop],
-                        [mapMaxPositon.latRight, mapMaxPositon.lngTop],
-                        [mapMaxPositon.latRight, mapMaxPositon.lngBottom],
-                        [mapMaxPositon.latLeft, mapMaxPositon.lngBottom],
-                    ], {
-                        color: 'yellow',
-                        fillOpacity: 0.2,
-                    }).addTo(map);
+                    const points = groupPointsDistance(mapMaxPositon.points);
+                    points.forEach(function (point) {
+                        const bounds = L.latLngBounds(point[0], point[1]);
+                        L.rectangle(bounds, {color: "blue", weight: 1}).addTo(map);
+                    })
 
-                    L.polygon([
-                        [mapMaxPositon2.latLeft, mapMaxPositon2.lngTop],
-                        [mapMaxPositon2.latRight, mapMaxPositon2.lngTop],
-                        [mapMaxPositon2.latRight, mapMaxPositon2.lngBottom],
-                        [mapMaxPositon2.latLeft, mapMaxPositon2.lngBottom],
-                    ], {
-                        color: 'yellow',
-                        fillOpacity: 0.2,
-                    }).addTo(map);
+                    // getLocationByPoints(points, function (locations) {
+                    //     $.each(locations, function (index, item) {
+                    //         const position = [item.latitude, item.longitude];
+                    //         // item.photo = JSON.parse(item.photo)
+                    //         var marker = L.marker(position).addTo(map);
+                    //         const imgUrl = item?.photo?.images?.large?.url;
+                    //         const name = item.name;
+                    //         const rating = item.num_reviews;
+                    //         const subCategoryHtml = item.sub_categories.map(category => (`
+                    //     <span class="badge bg-secondary fw-bold me-1">${category?.name}</span>
+                    // `)).join(" ");
+                    //
+                    //         const popup = `<div>
+                    //     <img src="${imgUrl}" class="w-100 rounded-3">
+                    //     <div class="fw-bold mt-2">${name} - ${item?.location_string}</div>
+                    //     <span class="badge bg-success fw-bold me-1">Rating: ${rating}</span>
+                    //     ${subCategoryHtml}
+                    //     <div>${item?.description}</div>
+                    // </div>`
+                    //
+                    //         marker.bindPopup(popup).openPopup();
+                    //
+                    //         var circle = L.circle(position, {
+                    //             color: 'red',
+                    //             fillColor: '#f03',
+                    //             fillOpacity: 0.5,
+                    //             radius: rating * 3
+                    //         }).addTo(map);
+                    //
+                    //         circle.bindPopup(popup);
+                    //
+                    //         document.getElementById("map").scrollIntoView({behavior: "smooth"});
+                    //     })
+                    // })
+
+                    // L.polygon([
+                    //     [mapMaxPositon.latLeft, mapMaxPositon.lngTop],
+                    //     [mapMaxPositon.latRight, mapMaxPositon.lngTop],
+                    //     [mapMaxPositon.latRight, mapMaxPositon.lngBottom],
+                    //     [mapMaxPositon.latLeft, mapMaxPositon.lngBottom],
+                    // ], {
+                    //     color: 'yellow',
+                    //     fillOpacity: 0.2,
+                    // }).addTo(map);
+                    //
+                    // L.polygon([
+                    //     [mapMaxPositon2.latLeft, mapMaxPositon2.lngTop],
+                    //     [mapMaxPositon2.latRight, mapMaxPositon2.lngTop],
+                    //     [mapMaxPositon2.latRight, mapMaxPositon2.lngBottom],
+                    //     [mapMaxPositon2.latLeft, mapMaxPositon2.lngBottom],
+                    // ], {
+                    //     color: 'yellow',
+                    //     fillOpacity: 0.2,
+                    // }).addTo(map);
                     // Your action goes here
                 })
 
-                // Determine bounding box
-                var bounds = locations.map(item => ([item.latitude, item.longitude])).reduce(function (bounds, loc) {
-                    return bounds.extend(loc);
-                }, L.latLngBounds(locations[0], locations[0]));
-
-                // bounds.extend([cityTo.lng, cityTo.lat])
-                // bounds.extend([cityTo.lng, cityTo.lat])
-
-                // Set map view to the bounding box and adjust zoom level
-                map.fitBounds(bounds);
+                // var bounds = locations.map(item => ([item.latitude, item.longitude])).reduce(function (bounds, loc) {
+                //     return bounds.extend(loc);
+                // }, L.latLngBounds(locations[0], locations[0]));
+                //
+                // map.fitBounds(bounds);
             }
 
             function generateMap() {
+                initMap(cityFrom, cityTo)
+            }
+
+            function getLocationByPolygon(mapMaxPositon,callback) {
                 const city_from = $("#select2-dropdown-city-from").val();
                 const city_to = $("#select2-dropdown-city-to").val();
                 const limit = $("#limit-locations").val();
                 const limitRadius = $("#limit-radius").val();
                 $(".btn-create-map").attr("disabled", true);
 
-                axios.get(BASE_API + `/ai/trip-plan/wayspot?&from_city_id=${city_from}&to_city_id=${city_to}&limit=${limit}&radius=${limitRadius}`)
+                const query = {
+                    from_city_id: city_from,
+                    to_city_id: city_to,
+                    limit: limit,
+                    limitRadius: limitRadius,
+                    latLeft: mapMaxPositon.latLeft,
+                    latRight: mapMaxPositon.latRight,
+                    lngTop: mapMaxPositon.lngTop,
+                    lngBottom: mapMaxPositon.lngBottom
+                }
+
+                const queryStr = getQueryStringFromObject(query);
+
+                axios.get(BASE_API + `/ai/trip-plan/wayspot?${queryStr}`)
                     .then(r => {
                         function compare(a, b) {
                             if (a.numb_review < b.numb_review) {
@@ -350,9 +392,42 @@
 
                         locations = (r.data.locations).sort(compare);
                         locations = locations.map(location => ({...location, photo: JSON.parse(location.photo)}));
-                        cityFrom = r.data.city_from;
-                        cityTo = r.data.city_to;
-                        initMap(locations, cityFrom, cityTo)
+                        callback(locations)
+                    }).finally(() => {
+                    $(".btn-create-map").attr("disabled", false);
+                })
+            }
+
+            function getLocationByPoints(points,callback) {
+                const city_from = $("#select2-dropdown-city-from").val();
+                const city_to = $("#select2-dropdown-city-to").val();
+                const limit = $("#limit-locations").val();
+                const limitRadius = $("#limit-radius").val();
+                $(".btn-create-map").attr("disabled", true);
+
+                const query = {
+                    from_city_id: city_from,
+                    to_city_id: city_to,
+                    limit: limit,
+                    limitRadius: limitRadius,
+                    points: points
+                }
+
+                axios.post(BASE_API + `/ai/trip-plan/wayspot/points`,query)
+                    .then(r => {
+                        function compare(a, b) {
+                            if (a.numb_review < b.numb_review) {
+                                return -1;
+                            }
+                            if (a.numb_review > b.numb_review) {
+                                return 1;
+                            }
+                            return 0;
+                        }
+
+                        locations = (r.data.locations).sort(compare);
+                        locations = locations.map(location => ({...location, photo: JSON.parse(location.photo)}));
+                        callback(locations)
                     }).finally(() => {
                     $(".btn-create-map").attr("disabled", false);
                 })
