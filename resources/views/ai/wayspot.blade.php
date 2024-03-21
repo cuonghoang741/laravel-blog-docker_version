@@ -351,7 +351,7 @@
                                 color: 'red',
                                 fillColor: '#f03',
                                 fillOpacity: 0.5,
-                                radius: Math.min(rating,3000) * 3
+                                radius: Math.min(rating,10000) * 3
                             }).addTo(map);
 
                             circle.bindPopup(popup);
