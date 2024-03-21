@@ -6,7 +6,6 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
           integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
           crossorigin=""/>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.2.0/dist/leaflet.css"/>
     <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css"/>
 
     <style>
@@ -86,7 +85,7 @@
         <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"
                 defer></script>
 
-        <script src="https://unpkg.com/leaflet@1.2.0/dist/leaflet.js"></script>
+        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
         <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
         <script src="/js/wanderlog-locations.js"></script>
 
@@ -111,11 +110,12 @@
                 if (listCategories?.length === 1 && listCategories[0] == 0) {
 
                 } else {
-                    locationsFilter = [...locations].filter(function (location) {
-                        return location?.sub_categories?.find(i => listCategories.includes(i.id))
+                    locationsFilter = locationsFilter.filter(function (location) {
+                        return listCategories.includes(location.subcategory_id)
                     });
                 }
-                initMap(locationsFilter, cityFrom, cityTo)
+                console.log("locationsFilter: ",locationsFilter)
+                initMap(cityFrom, cityTo,locationsFilter)
             }
 
             function categorySelect() {
@@ -228,7 +228,7 @@
                 return groups
             }
 
-            function initMap(cityFrom, cityTo) {
+            function initMap(cityFrom, cityTo,inputLocations = []) {
                 map?.remove();
                 map = null;
                 $("#map").html("");
@@ -273,12 +273,12 @@
                 var marker = L.marker([cityTo.lat, cityTo.lng]).addTo(map);
                 marker.bindPopup(`<b>End point: ${cityTo.name}</b>`).openPopup();
 
-                // var polygon = L.polygon([
-                //     [cityTo.lat, cityTo.lng],
-                //     [cityTo.lat, cityFrom.lng],
-                //     [cityFrom.lat, cityFrom.lng],
-                //     [cityFrom.lat, cityTo.lng],
-                // ]).addTo(map);
+                var bounds = [cityFrom,cityTo].map(item => ([item.lat, item.lng])).reduce(function (bounds, loc) {
+                    return bounds.extend(loc);
+                }, L.latLngBounds(locations[0], locations[0]));
+
+                map.fitBounds(bounds);
+
 
                 routing.on('routeselected', function (e) {
                     const route = e.route
@@ -335,9 +335,7 @@
                             const imgUrl = item?.photo?.images?.large?.url;
                             const name = item.name;
                             const rating = item.num_reviews;
-                            const subCategoryHtml = item?.sub_categories?.map(category => (`
-                                <span class="badge bg-secondary fw-bold me-1">${category?.name}</span>
-                            `)).join(" ");
+                            const subCategoryHtml = `<span class="badge bg-secondary fw-bold me-1">${item?.subcategory_name}</span>`
 
                             const popup = `<div>
                                 <img src="${imgUrl}" class="w-100 rounded-3">
@@ -359,11 +357,14 @@
                             circle.bindPopup(popup);
 
                             document.getElementById("map").scrollIntoView({behavior: "smooth"});
-
-
                         })
                     }
-
+                    console.log("inputLocations: ",inputLocations)
+                    if (inputLocations && inputLocations.length){
+                        printMarker(inputLocations);
+                        return;
+                    }
+                    console.log("call api")
                     getLocationByPoints(pointsOutbound1, function (locs) {
                         locations = locs;
                         printMarker(locs);
@@ -387,11 +388,6 @@
                     map.fitBounds(bounds);
                 })
 
-                var bounds = [cityFrom,cityTo].map(item => ([item.lat, item.lng])).reduce(function (bounds, loc) {
-                    return bounds.extend(loc);
-                }, L.latLngBounds(locations[0], locations[0]));
-
-                map.fitBounds(bounds);
             }
 
             function generateMap() {

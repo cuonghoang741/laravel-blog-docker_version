@@ -458,7 +458,10 @@ class TripPlanController extends Controller
             $longitude_end = $point[1][1];
 
             $queryRaw .= "
-        (SELECT * FROM locations
+        (SELECT locations.*, location_subcategories.name as subcategory_name, location_subcategories.id as subcategory_id
+        FROM locations
+     JOIN location_location_subcategories ON locations.id = location_location_subcategories.location_id
+     JOIN location_subcategories ON location_location_subcategories.location_subcategory_id = location_subcategories.id
                  WHERE latitude BETWEEN $latitude_start AND $latitude_end
                  AND longitude BETWEEN $longitude_start AND $longitude_end
                  order by num_reviews desc
