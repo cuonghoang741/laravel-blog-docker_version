@@ -468,7 +468,7 @@ class TripPlanController extends Controller
 
         // Loại bỏ UNION dư thừa ở cuối câu truy vấn
         $queryRaw = rtrim($queryRaw, "UNION ");
-        $queryRaw .= " limit 200";
+        $queryRaw .= "order by num_reviews desc limit 200";
         // Thực thi truy vấn và lấy kết quả
         $locations = DB::select($queryRaw);
 
