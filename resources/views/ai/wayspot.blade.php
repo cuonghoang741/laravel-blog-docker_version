@@ -16,7 +16,7 @@
 @endpush
 
 @section('content')
-    <div class="container min-vh-100">
+    <div class="container min-vh-100 overflow-hidden" style="width: 100vw">
         <h1 class="app-title fw-bold text-center pt-xl-5 pt-md-4">Let's Plan Your Journey!</h1>
 
         <div class="row row-cols-md-2 g-4">
@@ -351,7 +351,7 @@
                                 color: 'red',
                                 fillColor: '#f03',
                                 fillOpacity: 0.5,
-                                radius: rating * 3
+                                radius: Math.min(rating,3000) * 3
                             }).addTo(map);
 
                             circle.bindPopup(popup);
