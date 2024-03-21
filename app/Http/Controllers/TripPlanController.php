@@ -13,6 +13,7 @@ use App\Models\Post;
 use App\Services\TripPlanService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Excel;
 use Illuminate\Http\Response;
 
@@ -447,30 +448,32 @@ class TripPlanController extends Controller
 
     public function locationByPoints(Request $request){
         $points = $request->points;
-        $query = Location::query()
-            ->with(["subCategories"]);
 
-        $queryRaw = "SELECT *
-        FROM locations
-        WHERE latitude BETWEEN min_latitude1 AND max_latitude1
-          AND longitude BETWEEN min_longitude1 AND max_longitude1
-        UNION";
-        foreach ($points as $point){
-            $query = $query->where(function ($whereBuilder) use ($latRight,$lngTop,$latLeft,$lngBottom) {
-                $whereBuilder
-                    ->where("latitude",">",$latLeft)
-                    ->where("latitude","<",$latRight)
-                    ->where("longitude","<",$lngTop)
-                    ->where("longitude",">",$lngBottom)
-                ;
-            });
+        $queryRaw = ""; // Khởi tạo biến $queryRaw trước khi sử dụng
+
+        foreach ($points as $point) {
+            $latitude_start = $point[0][0];
+            $latitude_end = $point[1][0];
+            $longitude_start = $point[0][1];
+            $longitude_end = $point[1][1];
+
+            $queryRaw .= "
+        (SELECT * FROM locations
+                 WHERE latitude BETWEEN $latitude_start AND $latitude_end
+                 AND longitude BETWEEN $longitude_start AND $longitude_end
+                 LIMIT 20)
+        UNION ";
         }
 
-        dd($points);
+        // Loại bỏ UNION dư thừa ở cuối câu truy vấn
+        $queryRaw = rtrim($queryRaw, "UNION ");
+        $queryRaw .= " limit 200";
+        // Thực thi truy vấn và lấy kết quả
+        $locations = DB::select($queryRaw);
 
         return response()->json([
-            "points"=>$points,
-            "locations"=>$locations,
+            "points" => $points,
+            "locations" => $locations,
         ]);
     }
 

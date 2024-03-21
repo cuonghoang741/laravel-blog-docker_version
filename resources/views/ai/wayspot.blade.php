@@ -298,6 +298,7 @@
 
                     const outbound = getOutboundValue();
 
+                    const pointsOutbound = [];
                     [...points,...points2].forEach(function (point) {
                         let lat1 = point[0][0];
                         let lat2 = point[1][0];
@@ -305,47 +306,50 @@
                         let lng1 = point[0][1];
                         let lng2 = point[1][1];
 
-                        const bounds = L.latLngBounds(
-                            [Math.min(lat1,lat2)-outbound, Math.min(lng1,lng2) - outbound],
-                            [Math.max(lat1,lat2)+outbound, Math.max(lng1,lng2) + outbound]
-                        );
+                        const pos1 = [Math.min(lat1,lat2)-outbound, Math.min(lng1,lng2) - outbound];
+                        const pos2 = [Math.max(lat1,lat2)+outbound, Math.max(lng1,lng2) + outbound]
+
+                        pointsOutbound.push([pos1,pos2])
+
+                        const bounds = L.latLngBounds(pos1,pos2);
+
                         L.rectangle(bounds, {color: "yellow", weight: 1}).addTo(map);
                     });
 
-                    // getLocationByPoints(points, function (locations) {
-                    //     $.each(locations, function (index, item) {
-                    //         const position = [item.latitude, item.longitude];
-                    //         // item.photo = JSON.parse(item.photo)
-                    //         var marker = L.marker(position).addTo(map);
-                    //         const imgUrl = item?.photo?.images?.large?.url;
-                    //         const name = item.name;
-                    //         const rating = item.num_reviews;
-                    //         const subCategoryHtml = item.sub_categories.map(category => (`
-                    //     <span class="badge bg-secondary fw-bold me-1">${category?.name}</span>
-                    // `)).join(" ");
-                    //
-                    //         const popup = `<div>
-                    //     <img src="${imgUrl}" class="w-100 rounded-3">
-                    //     <div class="fw-bold mt-2">${name} - ${item?.location_string}</div>
-                    //     <span class="badge bg-success fw-bold me-1">Rating: ${rating}</span>
-                    //     ${subCategoryHtml}
-                    //     <div>${item?.description}</div>
-                    // </div>`
-                    //
-                    //         marker.bindPopup(popup).openPopup();
-                    //
-                    //         var circle = L.circle(position, {
-                    //             color: 'red',
-                    //             fillColor: '#f03',
-                    //             fillOpacity: 0.5,
-                    //             radius: rating * 3
-                    //         }).addTo(map);
-                    //
-                    //         circle.bindPopup(popup);
-                    //
-                    //         document.getElementById("map").scrollIntoView({behavior: "smooth"});
-                    //     })
-                    // })
+                    getLocationByPoints(pointsOutbound, function (locations) {
+                        $.each(locations, function (index, item) {
+                            const position = [item.latitude, item.longitude];
+                            // item.photo = JSON.parse(item.photo)
+                            var marker = L.marker(position).addTo(map);
+                            const imgUrl = item?.photo?.images?.large?.url;
+                            const name = item.name;
+                            const rating = item.num_reviews;
+                            const subCategoryHtml = item?.sub_categories?.map(category => (`
+                        <span class="badge bg-secondary fw-bold me-1">${category?.name}</span>
+                    `)).join(" ");
+
+                            const popup = `<div>
+                        <img src="${imgUrl}" class="w-100 rounded-3">
+                        <div class="fw-bold mt-2">${name} - ${item?.location_string}</div>
+                        <span class="badge bg-success fw-bold me-1">Rating: ${rating}</span>
+                        ${subCategoryHtml}
+                        <div>${item?.description}</div>
+                    </div>`
+
+                            marker.bindPopup(popup).openPopup();
+
+                            var circle = L.circle(position, {
+                                color: 'red',
+                                fillColor: '#f03',
+                                fillOpacity: 0.5,
+                                radius: rating * 3
+                            }).addTo(map);
+
+                            circle.bindPopup(popup);
+
+                            document.getElementById("map").scrollIntoView({behavior: "smooth"});
+                        })
+                    })
 
                     // L.polygon([
                     //     [mapMaxPositon.latLeft, mapMaxPositon.lngTop],
