@@ -273,12 +273,12 @@
                 var marker = L.marker([cityTo.lat, cityTo.lng]).addTo(map);
                 marker.bindPopup(`<b>End point: ${cityTo.name}</b>`).openPopup();
 
-                var polygon = L.polygon([
-                    [cityTo.lat, cityTo.lng],
-                    [cityTo.lat, cityFrom.lng],
-                    [cityFrom.lat, cityFrom.lng],
-                    [cityFrom.lat, cityTo.lng],
-                ]).addTo(map);
+                // var polygon = L.polygon([
+                //     [cityTo.lat, cityTo.lng],
+                //     [cityTo.lat, cityFrom.lng],
+                //     [cityFrom.lat, cityFrom.lng],
+                //     [cityFrom.lat, cityTo.lng],
+                // ]).addTo(map);
 
                 routing.on('routeselected', function (e) {
                     const route = e.route
@@ -385,27 +385,6 @@
                     }, L.latLngBounds(locations[0], locations[0]));
 
                     map.fitBounds(bounds);
-
-                    // L.polygon([
-                    //     [mapMaxPositon.latLeft, mapMaxPositon.lngTop],
-                    //     [mapMaxPositon.latRight, mapMaxPositon.lngTop],
-                    //     [mapMaxPositon.latRight, mapMaxPositon.lngBottom],
-                    //     [mapMaxPositon.latLeft, mapMaxPositon.lngBottom],
-                    // ], {
-                    //     color: 'yellow',
-                    //     fillOpacity: 0.2,
-                    // }).addTo(map);
-                    //
-                    // L.polygon([
-                    //     [mapMaxPositon2.latLeft, mapMaxPositon2.lngTop],
-                    //     [mapMaxPositon2.latRight, mapMaxPositon2.lngTop],
-                    //     [mapMaxPositon2.latRight, mapMaxPositon2.lngBottom],
-                    //     [mapMaxPositon2.latLeft, mapMaxPositon2.lngBottom],
-                    // ], {
-                    //     color: 'yellow',
-                    //     fillOpacity: 0.2,
-                    // }).addTo(map);
-                    // Your action goes here
                 })
 
                 var bounds = [cityFrom,cityTo].map(item => ([item.lat, item.lng])).reduce(function (bounds, loc) {
