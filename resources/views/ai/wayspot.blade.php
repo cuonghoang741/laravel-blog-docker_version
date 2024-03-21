@@ -347,7 +347,7 @@
                                 <div>${item?.description}</div>
                             </div>`
 
-                            marker.bindPopup(popup).openPopup();
+                            marker.bindPopup(popup);
 
                             var circle = L.circle(position, {
                                 color: 'red',
