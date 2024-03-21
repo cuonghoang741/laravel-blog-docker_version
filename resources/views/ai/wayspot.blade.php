@@ -6,8 +6,8 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
           integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
           crossorigin=""/>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.2.0/dist/leaflet.css" />
-    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.2.0/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css"/>
 
     <style>
         #map {
@@ -47,11 +47,14 @@
                 <label for="select2-dropdown-city-from" class="mb-3">Category (Default: All)</label>
                 <br>
                 <div class="d-inline-flex align-items-center">
-                    <button data-value="0" type="button" class="btn btn-group-item bg-app-active active m-2 select-all">All category</button>
+                    <button data-value="0" type="button" class="btn btn-group-item bg-app-active active m-2 select-all">
+                        All category
+                    </button>
                     <span style="border: 1.5px solid #bab8b8; height: 40px;width: 0px"></span>
                 </div>
                 @foreach($subCategories as $subCategory)
-                    <button data-value="{{$subCategory["id"]}}" type="button" class="btn btn-group-item bg-app-active m-2">{{$subCategory["name"]}}</button>
+                    <button data-value="{{$subCategory["id"]}}" type="button"
+                            class="btn btn-group-item bg-app-active m-2">{{$subCategory["name"]}}</button>
                 @endforeach
             </div>
         </div>
@@ -65,7 +68,12 @@
         <div id="map"></div>
         <div id="viewOnGGMap" style="display: none">
             <div class="d-flex justify-content-end fw-bold cursor-pointer mt-4">
-                <a style="color: #0d6efd;text-decoration: underline" href="https://www.google.com/maps/dir/33.93729,-106.85761/33.98729,-106.85861" target="_blank">View on google map</a>
+                <a href="https://www.google.com/maps/dir/33.93729,-106.85761/33.98729,-106.85861" target="_blank"
+                   class="btn bg-app btn-app text-white rounded-3 me-2 d-inline-flex align-items-center" >
+                    View on Google Maps</a>
+                <button class="btn bg-app btn-app text-white rounded-3"  onclick="openWanderlog()">
+                    View on Wanderlog</button>
+
             </div>
         </div>
     </div>
@@ -77,20 +85,25 @@
 
         <script src="https://unpkg.com/leaflet@1.2.0/dist/leaflet.js"></script>
         <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
+        <script src="/js/wanderlog-locations.js"></script>
 
         <script>
             var locations = [];
             var cityFrom = {};
             var cityTo = {};
 
+            function openWanderlog() {
+                window.open(`https://wanderlog.com/drive/between/${matchWanderlogLocationId(cityFrom.name)}/${matchWanderlogLocationId(cityTo.name)}`);
+            }
+
             function filterByCategory() {
-                const listCategories =  [...$(".btn-group-item.active").map((index,i)=>$(i).data("value"))];
+                const listCategories = [...$(".btn-group-item.active").map((index, i) => $(i).data("value"))];
                 let locationsFilter = [...locations];
-                if (listCategories?.length === 1 && listCategories[0] == 0){
+                if (listCategories?.length === 1 && listCategories[0] == 0) {
 
                 } else {
                     locationsFilter = [...locations].filter(function (location) {
-                        return location?.sub_categories?.find(i=>listCategories.includes(i.id))
+                        return location?.sub_categories?.find(i => listCategories.includes(i.id))
                     });
                 }
                 initMap(locationsFilter, cityFrom, cityTo)
@@ -98,11 +111,11 @@
 
             function categorySelect() {
                 $(".btn-group-item").click(function () {
-                    if($(this).hasClass("active")){
+                    if ($(this).hasClass("active")) {
                         $(this).removeClass("active")
                     } else $(this).addClass("active");
 
-                    if ($(this).hasClass("select-all")){
+                    if ($(this).hasClass("select-all")) {
                         $(".btn-group-item").removeClass("active")
                         $(this).addClass("active");
                     } else {
@@ -112,6 +125,7 @@
                     if (locations && locations?.length) filterByCategory();
                 })
             }
+
             $(function () {
                 categorySelect();
                 $('#select2-dropdown-city-from,#select2-dropdown-city-to').select2({
@@ -148,10 +162,10 @@
 
             var map;
 
-            function mapFindMaxPosition(instructions,coordinates) {
-                let latRight = cityFrom.lat,latLeft = cityFrom.lat,lngTop = cityFrom.lng,lngBottom = cityFrom.lng;
+            function mapFindMaxPosition(instructions, coordinates) {
+                let latRight = cityFrom.lat, latLeft = cityFrom.lat, lngTop = cityFrom.lng, lngBottom = cityFrom.lng;
 
-                $.each(instructions,function (i,instruction) {
+                $.each(instructions, function (i, instruction) {
                     const index = instruction.index;
                     const position = coordinates[index];
                     const lat = position.lat;
@@ -177,7 +191,7 @@
                     // }
                     lngBottom = Math.min(lngBottom, lng);
                 })
-                return {latLeft,latRight,lngTop,lngBottom}
+                return {latLeft, latRight, lngTop, lngBottom}
             }
 
             function initMap(locations, cityFrom, cityTo) {
@@ -186,7 +200,7 @@
                 $("#map").html("");
                 $("#viewOnGGMap").show();
 
-                $("#viewOnGGMap a").attr("href",`https://www.google.com/maps/dir/${cityFrom.lat},${cityFrom.lng}/${cityTo.lat},${cityTo.lng}`)
+                $("#viewOnGGMap a").attr("href", `https://www.google.com/maps/dir/${cityFrom.lat},${cityFrom.lng}/${cityTo.lat},${cityTo.lng}`)
 
                 const avgLat = (parseFloat(cityFrom.lat) + parseFloat(cityTo.lat)) / 2;
                 const avgLng = (parseFloat(cityFrom.lng) + parseFloat(cityTo.lng)) / 2;
@@ -206,7 +220,7 @@
                     const imgUrl = item?.photo?.images?.large?.url;
                     const name = item.name;
                     const rating = item.num_reviews;
-                    const subCategoryHtml = item.sub_categories.map(category=>(`
+                    const subCategoryHtml = item.sub_categories.map(category => (`
                         <span class="badge bg-secondary fw-bold me-1">${category?.name}</span>
                     `)).join(" ");
 
@@ -229,7 +243,7 @@
 
                     circle.bindPopup(popup);
 
-                    document.getElementById("map").scrollIntoView({ behavior: "smooth" });
+                    document.getElementById("map").scrollIntoView({behavior: "smooth"});
                 })
 
                 // const cityIcon = L.icon({
@@ -244,8 +258,8 @@
 
                 const routing = L.Routing.control({
                     waypoints: [
-                        L.latLng(cityFrom.lat,cityFrom.lng),
-                        L.latLng(cityTo.lat,cityTo.lng)
+                        L.latLng(cityFrom.lat, cityFrom.lng),
+                        L.latLng(cityTo.lat, cityTo.lng)
                     ],
                     showAlternatives: true,
                     collapsible: true
@@ -266,21 +280,21 @@
                     [cityFrom.lat, cityTo.lng],
                 ]).addTo(map);
 
-                routing.on('routeselected', function(e) {
+                routing.on('routeselected', function (e) {
                     console.log(e)
                     const route = e.route
                     const route2 = e.alternatives[0];
                     const coordinates = route.coordinates;
                     const instructions = route.instructions;
-                    const mapMaxPositon = mapFindMaxPosition(instructions,coordinates);
-                    const mapMaxPositon2 = mapFindMaxPosition(route2.instructions,route2.coordinates);
+                    const mapMaxPositon = mapFindMaxPosition(instructions, coordinates);
+                    const mapMaxPositon2 = mapFindMaxPosition(route2.instructions, route2.coordinates);
 
                     L.polygon([
                         [mapMaxPositon.latLeft, mapMaxPositon.lngTop],
                         [mapMaxPositon.latRight, mapMaxPositon.lngTop],
                         [mapMaxPositon.latRight, mapMaxPositon.lngBottom],
                         [mapMaxPositon.latLeft, mapMaxPositon.lngBottom],
-                    ],{
+                    ], {
                         color: 'yellow',
                         fillOpacity: 0.2,
                     }).addTo(map);
@@ -290,7 +304,7 @@
                         [mapMaxPositon2.latRight, mapMaxPositon2.lngTop],
                         [mapMaxPositon2.latRight, mapMaxPositon2.lngBottom],
                         [mapMaxPositon2.latLeft, mapMaxPositon2.lngBottom],
-                    ],{
+                    ], {
                         color: 'yellow',
                         fillOpacity: 0.2,
                     }).addTo(map);
@@ -329,7 +343,7 @@
                         }
 
                         locations = (r.data.locations).sort(compare);
-                        locations = locations.map(location=>({...location,photo: JSON.parse(location.photo)}));
+                        locations = locations.map(location => ({...location, photo: JSON.parse(location.photo)}));
                         cityFrom = r.data.city_from;
                         cityTo = r.data.city_to;
                         initMap(locations, cityFrom, cityTo)
@@ -338,7 +352,6 @@
                 })
             }
         </script>
-
 
     @endpush
 @endsection
