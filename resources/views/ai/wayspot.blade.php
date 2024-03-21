@@ -20,15 +20,20 @@
         <h1 class="app-title fw-bold text-center pt-xl-5 pt-md-4">Let's Plan Your Journey!</h1>
 
         <div class="row row-cols-md-2 g-4">
-            <div class="form-group mt-5">
-                <label for="select2-dropdown-city-from" class="mb-3">Where do you want to go from?</label>
-                <br>
-                <select id="select2-dropdown-city-from" class="w-100 py-4"></select>
-            </div>
-            <div class="form-group mt-5">
-                <label for="select2-dropdown-city-to" class="mb-3">Where do you want to go to?</label>
-                <br>
-                <select id="select2-dropdown-city-to" class="w-100 py-4"></select>
+            <div class="d-flex w-100 flex-md-nowrap flex-wrap justify-content-center">
+                <div class="form-group mt-4 w-100">
+                    <label for="select2-dropdown-city-from" class="mb-3">Where do you want to go from?</label>
+                    <br>
+                    <select id="select2-dropdown-city-from" class="w-100 py-4"></select>
+                </div>
+                <div class="px-4 d-flex align-items-end justify-content-center pb-md-3 fs-4 pt-4 pt-md-0 cursor-pointer" onclick="swapCity()">
+                    <i class="fad fa-exchange"></i>
+                </div>
+                <div class="form-group mt-4 w-100">
+                    <label for="select2-dropdown-city-to" class="mb-3">Where do you want to go to?</label>
+                    <br>
+                    <select id="select2-dropdown-city-to" class="w-100 py-4"></select>
+                </div>
             </div>
             <div>
                 <label for="select2-dropdown-city-from" class="mb-3">Max locations (default: 200)</label>
@@ -91,8 +96,8 @@
 
         <script>
             var locations = [];
-            var cityFrom = {};
-            var cityTo = {};
+            var cityFrom = null;
+            var cityTo = null;
 
             function openWanderlog() {
                 window.open(`https://wanderlog.com/drive/between/${matchWanderlogLocationId(cityFrom.name)}/${matchWanderlogLocationId(cityTo.name)}`);
@@ -207,6 +212,7 @@
                 let nextPoint = null;
 
                 locations.forEach(function (point,index) {
+                    console.log(point)
                     if (!firstPoint){
                         firstPoint = point;
                     }
@@ -228,12 +234,20 @@
                 return groups
             }
 
+            function validateCity(){
+                if (isObjEmpty(cityFrom) || isObjEmpty(cityTo)){
+                    quickToastMixin("error","Please select all cities")
+                }
+                return !isObjEmpty(cityFrom) && !isObjEmpty(cityTo);
+            }
+
             function initMap(cityFrom, cityTo,inputLocations = []) {
                 map?.remove();
                 map = null;
                 $("#map").html("");
                 $("#viewOnGGMap").show();
-
+                const valid = validateCity();
+                if (!valid) return ;
                 $("#viewOnGGMap a").attr("href", `https://www.google.com/maps/dir/${cityFrom.lat},${cityFrom.lng}/${cityTo.lat},${cityTo.lng}`)
 
                 const avgLat = (parseFloat(cityFrom.lat) + parseFloat(cityTo.lat)) / 2;
@@ -474,6 +488,33 @@
                 const outbound = $("#limit-radius").val();
                 return outbound ? outbound / 111.32 : 0.0897
             }
+
+            function swapCity() {
+                const cityFromClone = {...cityFrom};
+                const cityToClone = {...cityTo};
+                cityFrom = cityToClone;
+                cityTo = cityFromClone;
+                locations = [];
+                $(".select-all").click();
+
+                const cityFromName = $("#select2-select2-dropdown-city-from-container").html();
+                const cityToName = $("#select2-select2-dropdown-city-to-container").html();
+
+                $("#select2-select2-dropdown-city-from-container").html(cityToName);
+                $("#select2-select2-dropdown-city-to-container").html(cityFromName);
+
+                // initMap(cityFrom,cityTo)
+            }
+            function isObjEmpty(obj) {
+                for (const prop in obj) {
+                    if (Object.hasOwn(obj, prop)) {
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+
         </script>
 
     @endpush
