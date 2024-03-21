@@ -6,6 +6,9 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
           integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
           crossorigin=""/>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.2.0/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
+
     <style>
         #map {
             height: 80vh;
@@ -67,9 +70,10 @@
         <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js" defer></script>
         <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"
                 defer></script>
-        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-                integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-                crossorigin=""></script>
+
+        <script src="https://unpkg.com/leaflet@1.2.0/dist/leaflet.js"></script>
+        <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
+
         <script>
             var locations = [];
             var cityFrom = {};
@@ -195,6 +199,13 @@
                 //     shadowSize: [68, 95],
                 //     shadowAnchor: [22, 94]
                 // });
+
+                L.Routing.control({
+                    waypoints: [
+                        L.latLng(cityFrom.lat,cityFrom.lng),
+                        L.latLng(cityTo.lat,cityTo.lng)
+                    ]
+                }).addTo(map);
 
                 // marker cityFrom
                 var marker = L.marker([cityFrom.lat, cityFrom.lng]).addTo(map);
