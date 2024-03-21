@@ -461,6 +461,7 @@ class TripPlanController extends Controller
         (SELECT * FROM locations
                  WHERE latitude BETWEEN $latitude_start AND $latitude_end
                  AND longitude BETWEEN $longitude_start AND $longitude_end
+                 order by num_reviews desc
                  LIMIT 20)
         UNION ";
         }
