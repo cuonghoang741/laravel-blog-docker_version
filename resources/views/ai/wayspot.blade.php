@@ -63,7 +63,11 @@
         </div>
 
         <div id="map"></div>
-
+        <div id="viewOnGGMap" style="display: none">
+            <div class="d-flex justify-content-end fw-bold cursor-pointer mt-4">
+                <a style="color: #0d6efd;text-decoration: underline" href="https://www.google.com/maps/dir/33.93729,-106.85761/33.98729,-106.85861" target="_blank">View on google map</a>
+            </div>
+        </div>
     </div>
 
     @push("scripts")
@@ -125,7 +129,7 @@
                         processResults: function (data) {
                             // Trả về dữ liệu theo định dạng của Select2
                             return {
-                                results: data.map(i => ({...i, text: `${i.city_ascii} - ${i.country}`}))
+                                results: data.map(i => ({...i, text: `${i.city_ascii} - ${i.country},${i.admin_name}`}))
                             };
                         },
                         cache: true
@@ -147,6 +151,9 @@
                 map?.remove();
                 map = null;
                 $("#map").html("");
+                $("#viewOnGGMap").show();
+
+                $("#viewOnGGMap a").attr("href",`https://www.google.com/maps/dir/${cityFrom.lat},${cityFrom.lng}/${cityTo.lat},${cityTo.lng}`)
 
                 const avgLat = (parseFloat(cityFrom.lat) + parseFloat(cityTo.lat)) / 2;
                 const avgLng = (parseFloat(cityFrom.lng) + parseFloat(cityTo.lng)) / 2;
@@ -188,6 +195,8 @@
                     }).addTo(map);
 
                     circle.bindPopup(popup);
+
+                    document.getElementById("map").scrollIntoView({ behavior: "smooth" });
                 })
 
                 // const cityIcon = L.icon({
@@ -204,7 +213,9 @@
                     waypoints: [
                         L.latLng(cityFrom.lat,cityFrom.lng),
                         L.latLng(cityTo.lat,cityTo.lng)
-                    ]
+                    ],
+                    showAlternatives: true,
+                    collapsible: true
                 }).addTo(map);
 
                 // marker cityFrom
