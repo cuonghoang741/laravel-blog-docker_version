@@ -190,6 +190,11 @@
                     lngTop = Math.max(lngTop, lng);
                     lngBottom = Math.min(lngBottom, lng);
                 })
+                points.push({
+                    lat: cityTo.lat,
+                    lng: cityTo.lng,
+                    distance: 10000
+                })
                 return {points,latLeft, latRight, lngTop, lngBottom}
             }
 
@@ -202,7 +207,6 @@
                 let nextPoint = null;
 
                 locations.forEach(function (point,index) {
-                    console.log(point)
                     if (!firstPoint){
                         firstPoint = point;
                     }
@@ -285,10 +289,28 @@
                     const mapMaxPositon2 = mapFindMaxPosition(route2.instructions, route2.coordinates);
 
                     const points = groupPointsDistance(mapMaxPositon.points);
-                    points.forEach(function (point) {
+                    const points2 = groupPointsDistance(mapMaxPositon2.points);
+
+                    [...points,...points2].forEach(function (point) {
                         const bounds = L.latLngBounds(point[0], point[1]);
                         L.rectangle(bounds, {color: "blue", weight: 1}).addTo(map);
-                    })
+                    });
+
+                    const outbound = getOutboundValue();
+
+                    [...points,...points2].forEach(function (point) {
+                        let lat1 = point[0][0];
+                        let lat2 = point[1][0];
+
+                        let lng1 = point[0][1];
+                        let lng2 = point[1][1];
+
+                        const bounds = L.latLngBounds(
+                            [Math.min(lat1,lat2)-outbound, Math.min(lng1,lng2) - outbound],
+                            [Math.max(lat1,lat2)+outbound, Math.max(lng1,lng2) + outbound]
+                        );
+                        L.rectangle(bounds, {color: "yellow", weight: 1}).addTo(map);
+                    });
 
                     // getLocationByPoints(points, function (locations) {
                     //     $.each(locations, function (index, item) {
@@ -431,6 +453,11 @@
                     }).finally(() => {
                     $(".btn-create-map").attr("disabled", false);
                 })
+            }
+
+            function getOutboundValue() {
+                const outbound = $("#limit-radius").val();
+                return outbound ? outbound / 111.32 : 0.0897
             }
         </script>
 
