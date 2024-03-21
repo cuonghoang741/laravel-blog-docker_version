@@ -147,6 +147,39 @@
             })
 
             var map;
+
+            function mapFindMaxPosition(instructions,coordinates) {
+                let latRight = cityFrom.lat,latLeft = cityFrom.lat,lngTop = cityFrom.lng,lngBottom = cityFrom.lng;
+
+                $.each(instructions,function (i,instruction) {
+                    const index = instruction.index;
+                    const position = coordinates[index];
+                    const lat = position.lat;
+                    const lng = position.lng;
+
+                    // Update latLeft and latRight
+                    // if(latLeft > lat){
+                    //     console.log("change latLeft: ",instruction,position)
+                    // }
+                    latLeft = Math.min(latLeft, lat);
+                    // if(latRight < lat){
+                    //     console.log("change latright: ",instruction,position)
+                    // }
+                    latRight = Math.max(latRight, lat);
+
+                    // Update lngTop and lngBottom
+                    // if(lngTop < lat){
+                    //     console.log("change lngTop: ",instruction,position)
+                    // }
+                    lngTop = Math.max(lngTop, lng);
+                    // if(lngBottom > lat){
+                    //     console.log("change lngBottom: ",instruction,position)
+                    // }
+                    lngBottom = Math.min(lngBottom, lng);
+                })
+                return {latLeft,latRight,lngTop,lngBottom}
+            }
+
             function initMap(locations, cityFrom, cityTo) {
                 map?.remove();
                 map = null;
@@ -209,7 +242,7 @@
                 //     shadowAnchor: [22, 94]
                 // });
 
-                L.Routing.control({
+                const routing = L.Routing.control({
                     waypoints: [
                         L.latLng(cityFrom.lat,cityFrom.lng),
                         L.latLng(cityTo.lat,cityTo.lng)
@@ -232,6 +265,37 @@
                     [cityFrom.lat, cityFrom.lng],
                     [cityFrom.lat, cityTo.lng],
                 ]).addTo(map);
+
+                routing.on('routeselected', function(e) {
+                    console.log(e)
+                    const route = e.route
+                    const route2 = e.alternatives[0];
+                    const coordinates = route.coordinates;
+                    const instructions = route.instructions;
+                    const mapMaxPositon = mapFindMaxPosition(instructions,coordinates);
+                    const mapMaxPositon2 = mapFindMaxPosition(route2.instructions,route2.coordinates);
+
+                    L.polygon([
+                        [mapMaxPositon.latLeft, mapMaxPositon.lngTop],
+                        [mapMaxPositon.latRight, mapMaxPositon.lngTop],
+                        [mapMaxPositon.latRight, mapMaxPositon.lngBottom],
+                        [mapMaxPositon.latLeft, mapMaxPositon.lngBottom],
+                    ],{
+                        color: 'yellow',
+                        fillOpacity: 0.2,
+                    }).addTo(map);
+
+                    L.polygon([
+                        [mapMaxPositon2.latLeft, mapMaxPositon2.lngTop],
+                        [mapMaxPositon2.latRight, mapMaxPositon2.lngTop],
+                        [mapMaxPositon2.latRight, mapMaxPositon2.lngBottom],
+                        [mapMaxPositon2.latLeft, mapMaxPositon2.lngBottom],
+                    ],{
+                        color: 'yellow',
+                        fillOpacity: 0.2,
+                    }).addTo(map);
+                    // Your action goes here
+                })
 
                 // Determine bounding box
                 var bounds = locations.map(item => ([item.latitude, item.longitude])).reduce(function (bounds, loc) {
