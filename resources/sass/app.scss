@@ -385,3 +385,13 @@ a{
     border-radius: 100%;
     background-color: $gray-300;
 }
+.btn-group-item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 12px 20px;
+    width: 140px;
+    height: 48px;
+    border: 1px solid #E6E6E6;
+    border-radius: 12px;
+}

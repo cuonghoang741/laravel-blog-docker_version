@@ -77,4 +77,8 @@ class Location extends Model
     public function category(){
         return $this->belongsTo(LocationCategory::class,"category_id");
     }
+
+    public function subCategories(){
+        return $this->belongsToMany(LocationSubcategory::class,"location_location_subcategories","location_id","location_subcategory_id");
+    }
 }

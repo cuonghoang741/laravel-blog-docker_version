@@ -423,6 +423,7 @@ class TripPlanController extends Controller
             $lngBot = min([$cityToLngBot,$cityFromLngBot]);
 
             $locations = Location::query()
+                ->with(["subCategories"])
                 ->where(function ($whereBuilder) use ($latRight,$lngTop,$latLeft,$lngBot) {
                     $whereBuilder
                         ->where("latitude",">",$latLeft)
@@ -446,6 +447,7 @@ class TripPlanController extends Controller
 
     public function generateMap(Request $request){
 //        $locations = $this->locationsBetween($request);
-        return view("ai/wayspot");
+        $subCategories = LocationSubcategory::query()->orderBy("name")->get();
+        return view("ai/wayspot",["subCategories"=>$subCategories]);
     }
 }

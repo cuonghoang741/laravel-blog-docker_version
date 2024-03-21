@@ -13,7 +13,6 @@
             border: 1px solid #E6E6E6;
             border-radius: 12px;
         }
-
     </style>
 @endpush
 

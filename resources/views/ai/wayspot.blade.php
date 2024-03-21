@@ -34,11 +34,22 @@
                 <input id="limit-locations" type="number" class="form-control" placeholder="Default: 200" value="200">
             </div>
             <div>
-                <label for="select2-dropdown-city-from" class="mb-3">Radius (default: 10km)</label>
+                <label for="select2-dropdown-city-from" class="mb-3">Outbound (default: 10km)</label>
                 <br>
                 <input id="limit-radius" type="number" class="form-control"
-                       placeholder="Arc radius finds surrounding wayspot. The unit is kilometers (Km). default is 10"
+                       placeholder="Outbound finds surrounding wayspot. The unit is kilometers (Km). default is 10"
                        value="10">
+            </div>
+            <div class="w-100">
+                <label for="select2-dropdown-city-from" class="mb-3">Category (Default: All)</label>
+                <br>
+                <div class="d-inline-flex align-items-center">
+                    <button data-value="0" type="button" class="btn btn-group-item bg-app-active active m-2 select-all">All category</button>
+                    <span style="border: 1.5px solid #bab8b8; height: 40px;width: 0px"></span>
+                </div>
+                @foreach($subCategories as $subCategory)
+                    <button data-value="{{$subCategory["id"]}}" type="button" class="btn btn-group-item bg-app-active m-2">{{$subCategory["name"]}}</button>
+                @endforeach
             </div>
         </div>
 
@@ -56,9 +67,45 @@
         <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js" defer></script>
         <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"
                 defer></script>
-
+        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+                integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+                crossorigin=""></script>
         <script>
+            var locations = [];
+            var cityFrom = {};
+            var cityTo = {};
+
+            function filterByCategory() {
+                const listCategories =  [...$(".btn-group-item.active").map((index,i)=>$(i).data("value"))];
+                let locationsFilter = [...locations];
+                if (listCategories?.length === 1 && listCategories[0] == 0){
+
+                } else {
+                    locationsFilter = [...locations].filter(function (location) {
+                        return location?.sub_categories?.find(i=>listCategories.includes(i.id))
+                    });
+                }
+                initMap(locationsFilter, cityFrom, cityTo)
+            }
+
+            function categorySelect() {
+                $(".btn-group-item").click(function () {
+                    if($(this).hasClass("active")){
+                        $(this).removeClass("active")
+                    } else $(this).addClass("active");
+
+                    if ($(this).hasClass("select-all")){
+                        $(".btn-group-item").removeClass("active")
+                        $(this).addClass("active");
+                    } else {
+                        $(".btn-group-item.select-all").removeClass("active")
+                    }
+
+                    if (locations && locations?.length) filterByCategory();
+                })
+            }
             $(function () {
+                categorySelect();
                 $('#select2-dropdown-city-from,#select2-dropdown-city-to').select2({
                     ajax: {
                         url: BASE_API + '/ai/trip-plan/cities?&ios3=USA',
@@ -90,13 +137,13 @@
                     await onSelectCity(city)
                 });
             })
-        </script>
-        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-                integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-                crossorigin=""></script>
-        <script>
+
             var map;
             function initMap(locations, cityFrom, cityTo) {
+                map?.remove();
+                map = null;
+                $("#map").html("");
+
                 const avgLat = (parseFloat(cityFrom.lat) + parseFloat(cityTo.lat)) / 2;
                 const avgLng = (parseFloat(cityFrom.lng) + parseFloat(cityTo.lng)) / 2;
 
@@ -110,17 +157,20 @@
 
                 $.each(locations, function (index, item) {
                     const position = [item.latitude, item.longitude];
-                    console.log(item)
-                    item.photo = JSON.parse(item.photo)
+                    // item.photo = JSON.parse(item.photo)
                     var marker = L.marker(position).addTo(map);
                     const imgUrl = item?.photo?.images?.large?.url;
                     const name = item.name;
                     const rating = item.num_reviews;
+                    const subCategoryHtml = item.sub_categories.map(category=>(`
+                        <span class="badge bg-secondary fw-bold me-1">${category?.name}</span>
+                    `)).join(" ");
 
                     const popup = `<div>
                         <img src="${imgUrl}" class="w-100 rounded-3">
                         <div class="fw-bold mt-2">${name} - ${item?.location_string}</div>
-                        <span class="badge bg-success fw-bold">Rating: ${rating}</span>
+                        <span class="badge bg-success fw-bold me-1">Rating: ${rating}</span>
+                        ${subCategoryHtml}
                         <div>${item?.description}</div>
                     </div>`
 
@@ -174,9 +224,6 @@
             }
 
             function generateMap() {
-                map?.remove();
-                map = null;
-                $("#map").html("");
                 const city_from = $("#select2-dropdown-city-from").val();
                 const city_to = $("#select2-dropdown-city-to").val();
                 const limit = $("#limit-locations").val();
@@ -185,8 +232,6 @@
 
                 axios.get(BASE_API + `/ai/trip-plan/wayspot?&from_city_id=${city_from}&to_city_id=${city_to}&limit=${limit}&radius=${limitRadius}`)
                     .then(r => {
-                        let locations = r.data.locations;
-
                         function compare(a, b) {
                             if (a.numb_review < b.numb_review) {
                                 return -1;
@@ -197,14 +242,17 @@
                             return 0;
                         }
 
-                        locations = locations.sort(compare);
-                        const cityFrom = r.data.city_from;
-                        const cityTo = r.data.city_to;
+                        locations = (r.data.locations).sort(compare);
+                        locations = locations.map(location=>({...location,photo: JSON.parse(location.photo)}));
+                        cityFrom = r.data.city_from;
+                        cityTo = r.data.city_to;
                         initMap(locations, cityFrom, cityTo)
                     }).finally(() => {
                     $(".btn-create-map").attr("disabled", false);
                 })
             }
         </script>
+
+
     @endpush
 @endsection
