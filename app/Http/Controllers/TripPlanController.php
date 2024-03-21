@@ -409,30 +409,30 @@ class TripPlanController extends Controller
         $limit = !empty($request->limit) ? $request->limit : 200;
 
         if ($count) {
-            $cityFromLat = $cityFrom->lat;
-            $cityFromLngTop = (float)$cityFrom->lng + $radius;
-            $cityFromLngBot = (float)$cityFrom->lng - $radius;
+            $locations = [];
+            if ($request->type === "polygon"){
+                $latLeft = $request->latLeft;
+                $latRight = $request->latRight;
+                $lngTop = $request->lngTop;
+                $lngBot = $request->lngBot;
 
-            $cityToLat = $cityTo->lat;
-            $cityToLngTop= (float)$cityTo->lng + $radius;
-            $cityToLngBot= (float)$cityTo->lng - $radius;
+                $locations =$this->getWayspot($latRight,$lngTop,$latLeft,$lngBot,$limit);
+            } else {
+                $cityFromLat = $cityFrom->lat;
+                $cityFromLngTop = (float)$cityFrom->lng + $radius;
+                $cityFromLngBot = (float)$cityFrom->lng - $radius;
 
-            $latLeft = min([$cityToLat,$cityFromLat]);
-            $latRight = max([$cityToLat,$cityFromLat]);
-            $lngTop = max([$cityFromLngTop,$cityToLngTop]);
-            $lngBot = min([$cityToLngBot,$cityFromLngBot]);
+                $cityToLat = $cityTo->lat;
+                $cityToLngTop= (float)$cityTo->lng + $radius;
+                $cityToLngBot= (float)$cityTo->lng - $radius;
 
-            $locations = Location::query()
-                ->with(["subCategories"])
-                ->where(function ($whereBuilder) use ($latRight,$lngTop,$latLeft,$lngBot) {
-                    $whereBuilder
-                        ->where("latitude",">",$latLeft)
-                        ->where("latitude","<",$latRight)
-                        ->where("longitude","<",$lngTop)
-                        ->where("longitude",">",$lngBot)
-                    ;
-                })
-                ->orderBy("num_reviews","desc")->limit($limit)->get();
+                $latLeft = min([$cityToLat,$cityFromLat]);
+                $latRight = max([$cityToLat,$cityFromLat]);
+                $lngTop = max([$cityFromLngTop,$cityToLngTop]);
+                $lngBot = min([$cityToLngBot,$cityFromLngBot]);
+
+                $locations =$this->getWayspot($latRight,$lngTop,$latLeft,$lngBot,$limit);
+            }
 
             return response()->json([
                 "total_location"=>count($locations),
@@ -443,6 +443,22 @@ class TripPlanController extends Controller
         } else {
             return response()->json(['error' => 'Cannot find locations between 2 cities'], Response::HTTP_NOT_FOUND);
         }
+    }
+
+
+    function getWayspot($latRight,$lngTop,$latLeft,$lngBot,$limit = 200)
+    {
+        return Location::query()
+            ->with(["subCategories"])
+            ->where(function ($whereBuilder) use ($latRight,$lngTop,$latLeft,$lngBot) {
+                $whereBuilder
+                    ->where("latitude",">",$latLeft)
+                    ->where("latitude","<",$latRight)
+                    ->where("longitude","<",$lngTop)
+                    ->where("longitude",">",$lngBot)
+                ;
+            })
+            ->orderBy("num_reviews","desc")->limit($limit)->get();
     }
 
     public function generateMap(Request $request){
