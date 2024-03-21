@@ -71,9 +71,10 @@
                 <a href="https://www.google.com/maps/dir/33.93729,-106.85761/33.98729,-106.85861" target="_blank"
                    class="btn bg-app btn-app text-white rounded-3 me-2 d-inline-flex align-items-center" >
                     View on Google Maps</a>
-                <button class="btn bg-app btn-app text-white rounded-3"  onclick="openWanderlog()">
+                <button class="btn bg-app btn-app text-white rounded-3 me-2"  onclick="openWanderlog()">
                     View on Wanderlog</button>
-
+                <button class="btn bg-app btn-app text-white rounded-3"  onclick="openLazyTrip()">
+                    View on Lazy Trips</button>
             </div>
         </div>
     </div>
@@ -94,6 +95,11 @@
 
             function openWanderlog() {
                 window.open(`https://wanderlog.com/drive/between/${matchWanderlogLocationId(cityFrom.name)}/${matchWanderlogLocationId(cityTo.name)}`);
+            }
+            function openLazyTrip() {
+                const name1 = (cityFrom.name).toLowerCase().replace(/ /g, '-');
+                const name2 = (cityTo.name).toLowerCase().replace(/ /g, '-');
+                window.open(`https://lazytrips.com/trip/road-trip-from-${name1}-to-${name2}`);
             }
 
             function filterByCategory() {
