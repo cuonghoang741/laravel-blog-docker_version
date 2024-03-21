@@ -348,8 +348,22 @@
                             circle.bindPopup(popup);
 
                             document.getElementById("map").scrollIntoView({behavior: "smooth"});
+
+
                         })
+
+                        var bounds = locations.map(item => ([item.latitude, item.longitude])).reduce(function (bounds, loc) {
+                            return bounds.extend(loc);
+                        }, L.latLngBounds(locations[0], locations[0]));
+
+                        map.fitBounds(bounds);
                     })
+
+                    var bounds = [cityFrom,cityTo].map(item => ([item.lat, item.lng])).reduce(function (bounds, loc) {
+                        return bounds.extend(loc);
+                    }, L.latLngBounds(locations[0], locations[0]));
+
+                    map.fitBounds(bounds);
 
                     // L.polygon([
                     //     [mapMaxPositon.latLeft, mapMaxPositon.lngTop],
@@ -373,11 +387,11 @@
                     // Your action goes here
                 })
 
-                // var bounds = locations.map(item => ([item.latitude, item.longitude])).reduce(function (bounds, loc) {
-                //     return bounds.extend(loc);
-                // }, L.latLngBounds(locations[0], locations[0]));
-                //
-                // map.fitBounds(bounds);
+                var bounds = [cityFrom,cityTo].map(item => ([item.lat, item.lng])).reduce(function (bounds, loc) {
+                    return bounds.extend(loc);
+                }, L.latLngBounds(locations[0], locations[0]));
+
+                map.fitBounds(bounds);
             }
 
             function generateMap() {
