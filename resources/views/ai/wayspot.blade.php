@@ -50,16 +50,19 @@
             <div class="w-100">
                 <label for="select2-dropdown-city-from" class="mb-3">Category (Default: All)</label>
                 <br>
-                <div class="d-inline-flex align-items-center">
-                    <button data-value="0" type="button" class="btn btn-group-item bg-app-active active m-2 select-all">
-                        All category
-                    </button>
-                    <span style="border: 1.5px solid #bab8b8; height: 40px;width: 0px"></span>
+                <div class="">
+                    <div class="d-inline-flex align-items-center">
+                        <button data-value="0" type="button" class="btn btn-group-item bg-app-active active m-2 select-all">
+                            All category
+                        </button>
+                        <span style="border: 1.5px solid #bab8b8; height: 40px;width: 0px"></span>
+                    </div>
+                    @foreach($subCategories as $subCategory)
+                        <button data-value="{{$subCategory["id"]}}" type="button"
+                                style="width: unset"
+                                class="d-inline-block btn btn-group-item bg-app-active m-2">{{$subCategory["name"]}}</button>
+                    @endforeach
                 </div>
-                @foreach($subCategories as $subCategory)
-                    <button data-value="{{$subCategory["id"]}}" type="button"
-                            class="btn btn-group-item bg-app-active m-2">{{$subCategory["name"]}}</button>
-                @endforeach
             </div>
         </div>
 
