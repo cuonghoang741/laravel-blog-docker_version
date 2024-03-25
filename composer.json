@@ -17,7 +17,6 @@
         "laravel/sanctum": "^3.3",
         "laravel/socialite": "^5.12",
         "laravel/tinker": "2.8.2",
-        "leaflet/leaflet": "*",
         "maatwebsite/excel": "^3.1",
         "nunomaduro/collision": "7.8.1",
         "predis/predis": "2.2.2",
