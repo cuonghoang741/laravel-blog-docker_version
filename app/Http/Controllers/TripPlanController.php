@@ -448,6 +448,7 @@ class TripPlanController extends Controller
 
     public function locationByPoints(Request $request){
         $points = $request->points;
+        $limit = !empty($request->limit) ? $request->limit : 200;
 
         $conditions = [];
         $params = [];
@@ -469,7 +470,7 @@ class TripPlanController extends Controller
         JOIN location_subcategories ON location_location_subcategories.location_subcategory_id = location_subcategories.id
         WHERE {$conditionsStr}
         ORDER BY num_reviews DESC
-        LIMIT 200
+        LIMIT {$limit}
     ";
 
         $locations = DB::select($query, $params);
