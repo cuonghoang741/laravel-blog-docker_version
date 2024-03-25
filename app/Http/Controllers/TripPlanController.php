@@ -449,31 +449,30 @@ class TripPlanController extends Controller
     public function locationByPoints(Request $request){
         $points = $request->points;
 
-        $queryRaw = ""; // Khởi tạo biến $queryRaw trước khi sử dụng
+        $conditions = [];
+        $params = [];
 
-        foreach ($points as $point) {
-            $latitude_start = $point[0][0];
-            $latitude_end = $point[1][0];
-            $longitude_start = $point[0][1];
-            $longitude_end = $point[1][1];
-
-            $queryRaw .= "
-        (SELECT locations.*, location_subcategories.name as subcategory_name, location_subcategories.id as subcategory_id
-        FROM locations
-     JOIN location_location_subcategories ON locations.id = location_location_subcategories.location_id
-     JOIN location_subcategories ON location_location_subcategories.location_subcategory_id = location_subcategories.id
-                 WHERE latitude BETWEEN $latitude_start AND $latitude_end
-                 AND longitude BETWEEN $longitude_start AND $longitude_end
-                 order by num_reviews desc
-                 LIMIT 20)
-        UNION ";
+        foreach ($points as $index => $point) {
+            $conditions[] = "(latitude BETWEEN :latitude_start_{$index} AND :latitude_end_{$index}) AND (longitude BETWEEN :longitude_start_{$index} AND :longitude_end_{$index})";
+            $params[":latitude_start_{$index}"] = $point[0][0];
+            $params[":latitude_end_{$index}"] = $point[1][0];
+            $params[":longitude_start_{$index}"] = $point[0][1];
+            $params[":longitude_end_{$index}"] = $point[1][1];
         }
 
-        // Loại bỏ UNION dư thừa ở cuối câu truy vấn
-        $queryRaw = rtrim($queryRaw, "UNION ");
-        $queryRaw .= "order by num_reviews desc limit 200";
-        // Thực thi truy vấn và lấy kết quả
-        $locations = DB::select($queryRaw);
+        $conditionsStr = implode(" OR ", $conditions);
+
+        $query = "
+        SELECT locations.*, location_subcategories.name as subcategory_name, location_subcategories.id as subcategory_id
+        FROM locations
+        JOIN location_location_subcategories ON locations.id = location_location_subcategories.location_id
+        JOIN location_subcategories ON location_location_subcategories.location_subcategory_id = location_subcategories.id
+        WHERE {$conditionsStr}
+        ORDER BY num_reviews DESC
+        LIMIT 200
+    ";
+
+        $locations = DB::select($query, $params);
 
         return response()->json([
             "points" => $points,
