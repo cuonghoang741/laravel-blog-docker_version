@@ -16,6 +16,8 @@ class Post extends Model
 {
     use HasFactory, Likeable;
 
+    public static $createable = ['title', 'content', 'posted_at', 'author_id', 'thumbnail_id', 'thumb_url', 'image_url', 'category_id','city', 'country', 'type', 'kind', 'status'];
+
     /**
      * The attributes that are mass assignable.
      *

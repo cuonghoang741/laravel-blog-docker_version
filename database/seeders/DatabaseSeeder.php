@@ -20,13 +20,13 @@ class DatabaseSeeder extends Seeder
         $role_admin = Role::firstOrCreate(['name' => Role::ROLE_ADMIN]);
 
         // MediaLibrary
-        MediaLibrary::firstOrCreate([]);
+//        MediaLibrary::firstOrCreate([]);
 
         // Users
         $user = User::firstOrCreate(
-            ['email' => 'admin2'],
+            ['email' => 'admin@gmail.com'],
             [
-                'name' => 'anakin',
+                'name' => 'admin',
                 'password' => Hash::make('123456'),
                 'email_verified_at' => now()
             ]
@@ -35,35 +35,35 @@ class DatabaseSeeder extends Seeder
         $user->roles()->sync([$role_admin->id]);
 
         // Posts
-        $post = Post::firstOrCreate(
-            [
-                'title' => 'Hello World',
-                'author_id' => $user->id
-            ],
-            [
-                'posted_at' => now(),
-                'content' => "
-                    Welcome to Laravel-blog !<br><br>
-                    Don't forget to read the README before starting.<br><br>
-                    Feel free to add a star on Laravel-blog on Github !<br><br>
-                    You can open an issue or (better) a PR if something went wrong."
-            ]
-        );
-
-        // Comments
-        Comment::firstOrCreate(
-            [
-                'author_id' => $user->id,
-                'post_id' => $post->id
-            ],
-            [
-                'posted_at' => now(),
-                'content' => "Hey ! I'm a comment as example."
-            ]
-        );
-
-        \App\Models\Category::firstOrCreate(
-            ["name"=>"Marketing","background_color"=> "#f1f1f1"]
-        );
+//        $post = Post::firstOrCreate(
+//            [
+//                'title' => 'Hello World',
+//                'author_id' => $user->id
+//            ],
+//            [
+//                'posted_at' => now(),
+//                'content' => "
+//                    Welcome to Laravel-blog !<br><br>
+//                    Don't forget to read the README before starting.<br><br>
+//                    Feel free to add a star on Laravel-blog on Github !<br><br>
+//                    You can open an issue or (better) a PR if something went wrong."
+//            ]
+//        );
+//
+//        // Comments
+//        Comment::firstOrCreate(
+//            [
+//                'author_id' => $user->id,
+//                'post_id' => $post->id
+//            ],
+//            [
+//                'posted_at' => now(),
+//                'content' => "Hey ! I'm a comment as example."
+//            ]
+//        );
+//
+//        \App\Models\Category::firstOrCreate(
+//            ["name"=>"Marketing","background_color"=> "#f1f1f1"]
+//        );
     }
 }

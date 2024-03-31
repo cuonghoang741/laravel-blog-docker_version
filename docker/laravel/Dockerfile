@@ -3,16 +3,8 @@ ARG user
 ARG uid
 # Cài đặt các phụ thuộc
 RUN apt-get update && apt-get install -y \
-    libpng-dev \
-    libjpeg-dev \
-    libfreetype6-dev \
-    libwebp-dev \
-    libzip-dev \
     nodejs \
     npm \
-    zip \
-    && docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
-    && docker-php-ext-install -j$(nproc) gd pdo pdo_mysql zip exif pcntl
 
 
 

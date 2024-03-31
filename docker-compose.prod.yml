@@ -38,12 +38,6 @@ services:
     ports:
       - "${REDIS_PORT}:6379"
 
-  npm:
-    image: node:16
-    working_dir: /var/www/code
-    entrypoint: [ "npm" ]
-    volumes:
-      - "./www/:/var/www/code"
 
 #volumes:
 #  laravel-blog-database:

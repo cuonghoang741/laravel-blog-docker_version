@@ -48,8 +48,7 @@ class PostsRequest extends FormRequest
             'kind' => 'nullable|string',
             'status' => 'nullable|string',
             'category_id' => 'nullable|integer',
-            'image_url' => 'nullable|integer',
-            'author_id' => ['required', 'exists:users,id', new CanBeAuthor],
+//            'author_id' => ['required', 'exists:users,id', new CanBeAuthor],
             'slug' => 'unique:posts,slug,' . (optional($this->post)->id ?: 'NULL'),
         ];
     }
